@@ -5,6 +5,7 @@ import 'modern-normalize';
 import Header from "@/components/Header/Header";
 import Footer from "@/components/Footer/Footer";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
+import ToastProvider from "@/components/ToastProvider";
 
 const geistSans = Inter({
   variable: "--font-geist-sans",
@@ -30,7 +31,8 @@ export default function RootLayout({
       <body className={`${geistSans.variable}`}>
         <TanStackProvider>
         <Header/>
-        {children}
+          {children}
+        <ToastProvider />
         {modal}
         <Footer />
         </TanStackProvider>

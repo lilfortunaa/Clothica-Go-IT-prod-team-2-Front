@@ -1,0 +1,150 @@
+/* RegistrationForm.module.css — адаптовано */
+.container {
+  width: 100%;
+  max-width: 480px;          /* збільшено до 480px */
+  margin: 0 auto;
+  padding: var(--spacing-2xl, 48px);  /* збільшено padding */
+  background-color: #FFFFFF;
+  border-radius: var(--border-radius-lg, 12px);
+  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+}
+
+.header {
+  text-align: center;
+  margin-bottom: var(--spacing-xl, 32px);
+}
+
+.title {
+  font-size: var(--font-size-3xl, 30px);  /* збільшено до 30px */
+  font-weight: var(--font-weight-bold, 700);
+  color: var(--color-text-primary, #1F2937);
+  margin-bottom: var(--spacing-sm, 8px);
+}
+
+.subtitle {
+  font-size: var(--font-size-base, 16px);  /* збільшено до 16px */
+  color: var(--color-text-secondary, #6B7280);
+}
+
+.form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-lg, 24px);
+}
+
+.formGroup {
+  display: flex;
+  flex-direction: column;
+  gap: var(--spacing-sm, 8px);
+}
+
+.label {
+  font-size: var(--font-size-sm, 14px);
+  font-weight: var(--font-weight-medium, 500);
+  color: var(--color-text-primary, #1F2937);
+}
+
+.input {
+  width: 100%;
+  padding: 14px 16px;              /* більш вертикального паддінгу */
+  font-size: var(--font-size-base, 16px);
+  color: var(--color-text-primary, #1F2937);
+  background-color: #F9FAFB;        /* змінено фон */
+  border: 1px solid var(--color-border, #E5E7EB);
+  border-radius: var(--border-radius-md, 8px);
+  transition: all 0.2s ease;
+}
+
+.input:focus {
+  outline: none;
+  border-color: var(--color-border-focus, #4F46E5);
+  background-color: #FFFFFF;
+  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
+}
+
+.hint {
+  font-size: var(--font-size-xs, 12px);
+  color: var(--color-text-secondary, #6B7280);
+}
+
+.errorText {
+  font-size: var(--font-size-xs, 12px);
+  color: var(--color-error, #EF4444);
+}
+
+.submitButton {
+  width: 100%;
+  padding: 16px 24px;              /* збільшено вертикальний паддінг */
+  font-size: var(--font-size-base, 16px);
+  font-weight: var(--font-weight-semibold, 600);
+  color: var(--color-neutral-darkest);
+  background-color: #c5e1a5;
+  border: 1px solid #c5e1a5;
+  border-radius: 100px;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #9db484;
+  border: 1px solid #4e5a42;
+  transform: translateY(-1px);
+  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+}
+
+.submitButton:disabled {
+  background-color: #9CA3AF;
+  cursor: not-allowed;
+  opacity: 0.7;
+}
+
+.loader {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.spinner {
+  width: 16px;
+  height: 16px;
+  border: 2px solid rgba(255, 255, 255, 0.3);
+  border-top-color: #fff;
+  border-radius: 50%;
+  animation: spin 0.6s linear infinite;
+}
+
+.footer {
+  margin-top: var(--spacing-2xl, 48px);  /* збільшено мм */
+  text-align: center;
+}
+
+.footerText {
+  font-size: var(--font-size-sm, 14px);
+  color: var(--color-text-secondary, #6B7280);
+}
+
+.link {
+  color: var(--color-accent, #4F46E5);
+  font-weight: var(--font-weight-medium, 500);
+  text-decoration: none;
+}
+
+.link:hover {
+  text-decoration: underline;
+}
+
+/* Адаптивність */
+@media (min-width: 768px) {
+  .container {
+    max-width: 560px;             /* на десктопі ще більша ширина */
+    padding: var(--spacing-4xl, 64px);
+  }
+
+  .title {
+    font-size: var(--font-size-4xl, 36px);   /* заголовок 36px */
+  }
+}

@@ -2,8 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import 'modern-normalize';
-import Header from "@/components/Header/Header";
-import Footer from "@/components/Footer/Footer";
 import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
 import ToastProvider from "@/components/ToastProvider";
 
@@ -30,11 +28,9 @@ export default function RootLayout({
     <html lang="en">
       <body className={`${geistSans.variable}`}>
         <TanStackProvider>
-        <Header/>
-          {children}
+        {children}
         <ToastProvider />
         {modal}
-        <Footer />
         </TanStackProvider>
       </body>
     </html>

@@ -1,150 +1,214 @@
-/* RegistrationForm.module.css — адаптовано */
 .container {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background-color: var(--color-deco-lightest);
+}
+
+.logo {
+  position: absolute;
+  top: 24px;
+  left: 24px;
+  font-size: 20px;
+  font-weight: 600;
+  color: #000;
+}
+
+.formWrapper {
   width: 100%;
-  max-width: 480px;          /* збільшено до 480px */
-  margin: 0 auto;
-  padding: var(--spacing-2xl, 48px);  /* збільшено padding */
-  background-color: #FFFFFF;
-  border-radius: var(--border-radius-lg, 12px);
-  box-shadow: var(--shadow-md, 0 4px 6px -1px rgba(0, 0, 0, 0.1));
+  max-width: 375px;
+  background-color: var(--color-deco-lightest);
+  border-radius: 0;
+  padding: 40px 24px;
+  position: relative;
+}
+
+.tabs {
+  display: flex;
+  margin-bottom: 32px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.tab {
+  flex: 1; /* ← Однакова ширина */
+  padding: 12px 0;
+  font-size: 16px;
+  color: #666;
+  text-decoration: none;
+  text-align: center; /* ← По центру */
+  border-bottom: 2px solid transparent;
+  transition: all 0.2s ease;
+}
+
+.tab:hover {
+  color: #000;
+}
+
+.tabActive {
+  color: #000;
+  border-bottom: 2px solid #000;
 }
 
 .header {
   text-align: center;
-  margin-bottom: var(--spacing-xl, 32px);
+  margin-bottom: 32px;
 }
 
 .title {
-  font-size: var(--font-size-3xl, 30px);  /* збільшено до 30px */
-  font-weight: var(--font-weight-bold, 700);
-  color: var(--color-text-primary, #1F2937);
-  margin-bottom: var(--spacing-sm, 8px);
-}
-
-.subtitle {
-  font-size: var(--font-size-base, 16px);  /* збільшено до 16px */
-  color: var(--color-text-secondary, #6B7280);
+  font-size: 32px;
+  font-weight: 600;
+  color: #000;
+  margin: 0;
 }
 
 .form {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-lg, 24px);
+  gap: 20px;
 }
 
 .formGroup {
   display: flex;
   flex-direction: column;
-  gap: var(--spacing-sm, 8px);
+  gap: 8px;
 }
 
 .label {
-  font-size: var(--font-size-sm, 14px);
-  font-weight: var(--font-weight-medium, 500);
-  color: var(--color-text-primary, #1F2937);
+  font-size: 14px;
+  font-weight: 400;
+  color: #000;
 }
 
 .input {
   width: 100%;
-  padding: 14px 16px;              /* більш вертикального паддінгу */
-  font-size: var(--font-size-base, 16px);
-  color: var(--color-text-primary, #1F2937);
-  background-color: #F9FAFB;        /* змінено фон */
-  border: 1px solid var(--color-border, #E5E7EB);
-  border-radius: var(--border-radius-md, 8px);
+  padding: 14px 16px;
+  font-size: 14px;
+  color: #666;
+  background-color: #FFF;
+  border: 1px solid rgba(0, 0, 0, 0.1);
+  border-radius: 8px;
   transition: all 0.2s ease;
+}
+
+.input::placeholder {
+  color: #999;
 }
 
 .input:focus {
   outline: none;
-  border-color: var(--color-border-focus, #4F46E5);
-  background-color: #FFFFFF;
-  box-shadow: 0 0 0 3px rgba(79, 70, 229, 0.1);
-}
-
-.hint {
-  font-size: var(--font-size-xs, 12px);
-  color: var(--color-text-secondary, #6B7280);
+  border-color: #C5E1A5;
+  box-shadow: 0 0 0 3px rgba(197, 225, 165, 0.1);
 }
 
 .errorText {
-  font-size: var(--font-size-xs, 12px);
-  color: var(--color-error, #EF4444);
+  font-size: 12px;
+  color: #E53E3E;
+  margin-top: 4px;
 }
 
 .submitButton {
   width: 100%;
-  padding: 16px 24px;              /* збільшено вертикальний паддінг */
-  font-size: var(--font-size-base, 16px);
-  font-weight: var(--font-weight-semibold, 600);
-  color: var(--color-neutral-darkest);
-  background-color: #c5e1a5;
-  border: 1px solid #c5e1a5;
+  padding: 16px 24px;
+  font-size: 16px;
+  font-weight: 500;
+  color: #000;
+  background-color: #C5E1A5;
+  border: none;
   border-radius: 100px;
   cursor: pointer;
   transition: all 0.2s ease;
+  margin-top: 12px;
+}
+
+.submitButton:hover:not(:disabled) {
+  background-color: #B5D095;
+  transform: translateY(-1px);
+}
+
+.submitButton:active:not(:disabled) {
+  transform: translateY(0);
+}
+
+.submitButton:disabled {
+  background-color: #E0E0E0;
+  color: #999;
+  cursor: not-allowed;
+}
+
+.loader {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 8px;
 }
 
-.submitButton:hover:not(:disabled) {
-  background-color: #9db484;
-  border: 1px solid #4e5a42;
-  transform: translateY(-1px);
-  box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
-}
-
-.submitButton:disabled {
-  background-color: #9CA3AF;
-  cursor: not-allowed;
-  opacity: 0.7;
-}
-
-.loader {
-  display: flex;
-  align-items: center;
-  gap: 8px;
-}
-
 .spinner {
   width: 16px;
   height: 16px;
-  border: 2px solid rgba(255, 255, 255, 0.3);
-  border-top-color: #fff;
+  border: 2px solid rgba(0, 0, 0, 0.1);
+  border-top-color: #000;
   border-radius: 50%;
   animation: spin 0.6s linear infinite;
 }
 
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
 .footer {
-  margin-top: var(--spacing-2xl, 48px);  /* збільшено мм */
+  margin-top: 80px;
   text-align: center;
 }
 
 .footerText {
-  font-size: var(--font-size-sm, 14px);
-  color: var(--color-text-secondary, #6B7280);
+  font-size: 12px;
+  color: #666;
 }
 
 .link {
-  color: var(--color-accent, #4F46E5);
-  font-weight: var(--font-weight-medium, 500);
-  text-decoration: none;
+  color: #000;
+  text-decoration: underline;
+  font-weight: 500;
 }
 
 .link:hover {
-  text-decoration: underline;
+  color: #C5E1A5;
 }
 
-/* Адаптивність */
+/* Tablet - 768px */
 @media (min-width: 768px) {
-  .container {
-    max-width: 560px;             /* на десктопі ще більша ширина */
-    padding: var(--spacing-4xl, 64px);
+  .formWrapper {
+    max-width: 480px;
+    padding: 56px 40px;
+    border-radius: 16px;
   }
 
   .title {
-    font-size: var(--font-size-4xl, 36px);   /* заголовок 36px */
+    font-size: 40px;
+  }
+
+  .input {
+    padding: 16px 20px;
+    font-size: 16px;
+  }
+
+  .submitButton {
+    padding: 18px 32px;
+    font-size: 18px;
+  }
+}
+
+/* Desktop - 1440px */
+@media (min-width: 1440px) {
+  .formWrapper {
+    max-width: 600px;
+    padding: 72px 56px;
+  }
+
+  .title {
+    font-size: 48px;
   }
 }

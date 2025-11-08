@@ -1,7 +1,8 @@
 "use client";
 
 import { Formik, Form, Field, ErrorMessage } from "formik";
-import * as Yup from "yup"; 
+import * as Yup from "yup";
+import Link from "next/link";
 import { useRouter } from "next/navigation";
 import toast from "react-hot-toast";
 import { register } from "@/lib/api/clientApi";
@@ -9,17 +10,15 @@ import { useAuthStore } from "@/lib/store/authStore";
 import type { User } from "@/types/user";
 import css from "./RegistrationForm.module.css";
 
-// Схема валідації згідно з ТЗ
+// Схема валідації
 const schema = Yup.object({
   name: Yup.string()
-    .max(32, "Ім'я не повинно перевищувати 32 символи") 
+    .max(32, "Ім'я не повинно перевищувати 32 символи")
     .required("Введіть ім'я"),
-  phone: Yup.string()
-    .matches(/^\+38\s\(\d{3}\)\s\d{3}-\d{2}-\d{2}$/, "Введіть номер у форматі +38 (0XX) XXX-XX-XX")
-    .required("Введіть номер телефону"),
+  phone: Yup.string().required("Введіть номер телефону"),
   password: Yup.string()
-    .min(8, "Пароль повинен містити мінімум 8 символів") 
-    .max(128, "Пароль не повинен перевищувати 128 символів") 
+    .min(8, "Пароль повинен містити мінімум 8 символів")
+    .max(128, "Пароль не повинен перевищувати 128 символів")
     .required("Введіть пароль"),
 });
 
@@ -32,23 +31,15 @@ export default function RegistrationForm() {
     { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
   ) => {
     try {
-      // Викликаємо API реєстрації
       const user: User = await register({
         name: values.name,
         phone: values.phone,
         password: values.password,
       });
-      
-      // Зберігаємо користувача в store
       setUser(user);
-      
-      // Показуємо успішне повідомлення
       toast.success("Реєстрація успішна! Вітаємо в Clothica!");
-      
-      // Редірект на профіль або головну
       router.push("/profile");
     } catch (err) {
-      // Обробка помилок з backend
       const errorMessage = err instanceof Error ? err.message : "Помилка реєстрації";
       toast.error(errorMessage);
     } finally {
@@ -58,91 +49,93 @@ export default function RegistrationForm() {
 
   return (
     <div className={css.container}>
-      <div className={css.header}>
-        <h1 className={css.title}>Реєстрація</h1>
-        
-      </div>
+      <div className={css.logo}>Clothica</div>
+      
+      <div className={css.formWrapper}>
+        <div className={css.tabs}>
+          <Link href="/auth/register" className={`${css.tab} ${css.tabActive}`}>
+            Реєстрація
+          </Link>
+          <Link href="/auth/login" className={css.tab}>
+            Вхід
+          </Link>
+        </div>
 
-      <Formik
-        initialValues={{ name: "", phone: "", password: "" }}
-        validationSchema={schema}
-        onSubmit={handleSubmit}
-      >
-        {({ isSubmitting }) => (
-          <Form className={css.form}>
-            {/* Поле Ім'я */}
-            <div className={css.formGroup}>
-              <label htmlFor="name" className={css.label}>
-                Ім'я*
-              </label>
-              <Field
-                id="name"
-                name="name"
-                type="text"
-                placeholder="Ваше ім'я"
-                className={css.input}
-                maxLength={32}
-              />
-              <ErrorMessage name="name" component="span" className={css.errorText} />
-            </div>
+        <div className={css.header}>
+          <h1 className={css.title}>Реєстрація</h1>
+        </div>
 
-            {/* Поле Phone */}
-            <div className={css.formGroup}>
-              <label htmlFor="phone" className={css.label}>
-                Номер телефону*
-              </label>
-              <Field
-                id="phone"
-                name="phone"
-                type="phone"
-                placeholder="+38 (0__) ___-__-__"
-                className={css.input}
-                maxLength={64}
-              />
-              <ErrorMessage name="phone" component="span" className={css.errorText} />
-            </div>
+        <Formik
+          initialValues={{ name: "", phone: "", password: "" }}
+          validationSchema={schema}
+          onSubmit={handleSubmit}
+        >
+          {({ isSubmitting }) => (
+            <Form className={css.form}>
+              {/* Name */}
+              <div className={css.formGroup}>
+                <label htmlFor="name" className={css.label}>
+                  Ім'я*
+                </label>
+                <Field
+                  id="name"
+                  name="name"
+                  type="text"
+                  placeholder="Ваше ім'я"
+                  className={css.input}
+                  maxLength={32}
+                />
+                <ErrorMessage name="name" component="span" className={css.errorText} />
+              </div>
 
-            {/* Поле Пароль */}
-            <div className={css.formGroup}>
-              <label htmlFor="password" className={css.label}>
-                Пароль*
-              </label>
-              <Field
-                id="password"
-                name="password"
-                type="password"
-                placeholder="********"
-                className={css.input}
-                maxLength={128}
-              />
-              <ErrorMessage name="password" component="span" className={css.errorText} />
-              
-            </div>
+              {/* Phone */}
+              <div className={css.formGroup}>
+                <label htmlFor="phone" className={css.label}>
+                  Номер телефону*
+                </label>
+                <Field
+                  id="phone"
+                  name="phone"
+                  type="tel"
+                  placeholder="+38 (0__) ___-__-__"
+                  className={css.input}
+                />
+                <ErrorMessage name="phone" component="span" className={css.errorText} />
+              </div>
 
-            {/* Кнопка submit з лоадером */}
-            <button
-              type="submit"
-              className={css.submitButton}
-              disabled={isSubmitting}
-            >
-              {isSubmitting ? (
-                <span className={css.loader}>
-                  <span className={css.spinner} aria-hidden="true"></span>{" "}
-                  Реєстрація...
-                </span>
-              ) : (
-                "Зареєструватися"
-              )}
-            </button>
-          </Form>
-        )}
-      </Formik>
+              {/* Password */}
+              <div className={css.formGroup}>
+                <label htmlFor="password" className={css.label}>
+                  Пароль*
+                </label>
+                <Field
+                  id="password"
+                  name="password"
+                  type="password"
+                  placeholder="********"
+                  className={css.input}
+                  maxLength={128}
+                />
+                <ErrorMessage name="password" component="span" className={css.errorText} />
+              </div>
 
-      {/* Посилання на логін */}
-      <div className={css.footer}>
-        <p className={css.footerText}>
-          © 2025 Clothica. Всі права захищені.
-        </p>
+              {/* Submit */}
+              <button
+                type="submit"
+                className={css.submitButton}
+                disabled={isSubmitting}
+              >
+                {isSubmitting ? "Реєстрація..." : "Зареєструватися"}
+              </button>
+            </Form>
+          )}
+        </Formik>
+
+        <div className={css.footer}>
+          <p className={css.footerText}>
+            © 2025 Clothica. Всі права захищені.
+          </p>
+        </div>
       </div>
     </div>
   );

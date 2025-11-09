@@ -3,6 +3,7 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import css from './Categories.module.css';
+// import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
 // import axios from 'axios';
 
@@ -16,7 +17,9 @@ const Categories = () => {
   const [categories, setCategories] = useState<Category[]>(
     []
   );
+  const [error, setError] = useState<string | null>(null);
   const [loading, setLoading] = useState(true);
+  // const [mounted, setMounted] = useState(false);
 
   // const [visibleCount, setVisibleCount] = useState(3);
 
@@ -24,9 +27,12 @@ const Categories = () => {
   // const isTablet = useMediaQuery({
   //   minWidth: 768,
   //   maxWidth: 1439,
+  // });
+  // const isDesktop = useMediaQuery({ minWidth: 1440 });
 
   // useEffect(() => {
   //   setMounted(true);
+  // }, []);
 
   useEffect(() => {
     const fetchCategories = async () => {

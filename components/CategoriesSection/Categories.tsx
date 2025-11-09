@@ -5,65 +5,65 @@ import Image from 'next/image';
 import css from './Categories.module.css';
 import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
-import axios from 'axios';
+// import axios from 'axios';
 
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Keyboard, A11y } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
 
-type Category = {
-  _id: string;
-  name: string;
-  image: string;
-  goodsCount?: number;
-};
+import { Category, getCategories } from './categories';
 
 const Categories = () => {
   const [categories, setCategories] = useState<Category[]>(
     []
   );
   const [mounted, setMounted] = useState(false);
+  const [loading, setLoading] = useState(true);
 
   const [visibleCount, setVisibleCount] = useState(3);
 
   const isMobile = useMediaQuery({ maxWidth: 767 });
   const isTablet = useMediaQuery({
     minWidth: 768,
-    maxWidth: 1439,
-  });
-  const isDesktop = useMediaQuery({ minWidth: 1440 });
+  // const isMobile = useMediaQuery({ maxWidth: 767 });
+  // const isTablet = useMediaQuery({
+  //   minWidth: 768,
+  //   maxWidth: 1439,
 
   useEffect(() => {
-    setMounted(true);
-  }, []);
+  // useEffect(() => {
+  //   setMounted(true);
 
   useEffect(() => {
     const fetchCategories = async () => {
       try {
-        const { data } = await axios.get(
-          'https://clothica-go-it-prod-team-2-back.onrender.com/api/categories',
-          {
-            params: { page: 1, perPage: 10 },
-          }
-        );
-        setCategories(data.data || []);
-      } catch (error) {
-        console.error(
-          'Помилка при отриманні категорій:',
-          error
-        );
+        const data = await getCategories();
+        setCategories(data);
+      } catch (err) {
+        setError((err as Error).message);
+      } finally {
+        setLoading(false);
       }
     };
+
     fetchCategories();
   }, []);
 
-  if (!mounted) return null;
+  if (loading)
+    return (
+      <p className={css.loading}>
+        Завантаження категорій...
+      </p>
+    );
+  if (error) return <p className={css.error}>{error}</p>;
 
-  const visibleCategories = categories.slice(
-    0,
-    visibleCount
-  );
+  // if (!mounted) return null;
+
+  // const visibleCategories = categories.slice(
+  //   0,
+  //   visibleCount
+  // );
 
   return (
     <section className={css.categoriesSection}>

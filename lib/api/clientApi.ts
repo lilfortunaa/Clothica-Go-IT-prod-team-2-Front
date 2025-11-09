@@ -18,8 +18,8 @@ export const register = async (payload: RegisterRequest): Promise<User> => {
     password: payload.password,
   };
   try {
-    const res = await nextServer.post("/auth/register", cleanPayload);
-    return res.data.user;
+    const res = await nextServer.post<User>("/auth/register", cleanPayload);
+    return res.data;
   } catch (err: any) {
     throw new Error(err.response?.data?.error || err.message || "Помилка реєстрації");
   }

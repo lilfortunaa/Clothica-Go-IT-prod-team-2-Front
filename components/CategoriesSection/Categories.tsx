@@ -3,7 +3,6 @@
 import Link from 'next/link';
 import Image from 'next/image';
 import css from './Categories.module.css';
-import { useMediaQuery } from 'react-responsive';
 import { useEffect, useState } from 'react';
 // import axios from 'axios';
 
@@ -11,27 +10,21 @@ import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Keyboard, A11y } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-
 import { Category, getCategories } from './categories';
 
 const Categories = () => {
   const [categories, setCategories] = useState<Category[]>(
     []
   );
-  const [mounted, setMounted] = useState(false);
   const [loading, setLoading] = useState(true);
 
-  const [visibleCount, setVisibleCount] = useState(3);
+  // const [visibleCount, setVisibleCount] = useState(3);
 
-  const isMobile = useMediaQuery({ maxWidth: 767 });
-  const isTablet = useMediaQuery({
-    minWidth: 768,
   // const isMobile = useMediaQuery({ maxWidth: 767 });
   // const isTablet = useMediaQuery({
   //   minWidth: 768,
   //   maxWidth: 1439,
 
-  useEffect(() => {
   // useEffect(() => {
   //   setMounted(true);
 

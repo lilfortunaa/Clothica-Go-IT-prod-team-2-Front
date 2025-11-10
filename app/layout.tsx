@@ -1,37 +1,27 @@
 import type { Metadata } from "next";
-import { Inter } from "next/font/google";
 import "./globals.css";
-import 'modern-normalize';
-import TanStackProvider from "@/components/TanStackProvider/TanStackProvider";
+import AuthProvider from "@/components/auth/AuthProvider";
 import ToastProvider from "@/components/ToastProvider";
-
-const geistSans = Inter({
-  variable: "--font-geist-sans",
-  subsets: ["latin"],
-  weight: ["400", "500", "600"], 
-});
-
+import Header from "@/components/Header/Header";
 
 export const metadata: Metadata = {
-  title: "Clothica",
-  description: "Clothing store",
+  title: "Clothica - Інтернет магазин одягу",
+  description: "Ваш стиль з Clothica",
 };
 
 export default function RootLayout({
   children,
-  modal,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-    modal: React.ReactNode;
-}>) {
+}) {
   return (
-    <html lang="en">
-      <body className={`${geistSans.variable}`}>
-        <TanStackProvider>
-        {children}
+    <html lang="uk">
+      <body>
+        <AuthProvider>
+          <Header />
+          <main>{children}</main>
+        </AuthProvider>
         <ToastProvider />
-        {modal}
-        </TanStackProvider>
       </body>
     </html>
   );

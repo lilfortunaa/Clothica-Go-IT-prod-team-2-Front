@@ -9,8 +9,9 @@ import { register } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 import type { User } from "@/types/user";
 import css from "./RegistrationForm.module.css";
+import { fetchUserProfile } from "@/lib/api/clientApi";
 
-// Схема валідації
+
 const schema = Yup.object({
   firstName: Yup.string()
     .max(32, "Ім'я не повинно перевищувати 32 символи")
@@ -27,26 +28,38 @@ export default function RegistrationForm() {
   const setUser = useAuthStore((s) => s.setUser);
 
   const handleSubmit = async (
-    values: { firstName: string; phone: string; password: string },
-    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
-  ) => {
+  values: { firstName: string; phone: string; password: string },
+  { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
+) => {
+  try {
+    // 1. Реєстрація
+    const user: User = await register({
+      firstName: values.firstName,
+      phone: values.phone,
+      password: values.password,
+    });
+    
+    // 2. Оновлюємо store
+    setUser(user);
+    
+    // 3. Завантажуємо свіжі дані
     try {
-      const user: User = await register({
-        firstName: values.firstName,
-        phone: values.phone,
-        password: values.password,
-      });
-      setUser(user);
-      toast.success("Реєстрація успішна! Вітаємо в Clothica!");
-      router.push("/");
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Помилка реєстрації";
-      toast.error(errorMessage);
-    } finally {
-      setSubmitting(false);
+      const freshUser = await fetchUserProfile();
+      setUser(freshUser);
+    } catch (error) {
+      console.log("Could not fetch fresh user, using register response");
     }
+    
+    toast.success("Реєстрація успішна! Вітаємо в Clothica!");
+    router.push("/");
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : "Помилка реєстрації";
+    toast.error(errorMessage);
+  } finally {
+    setSubmitting(false);
+  }
   };
-
+  
   return (
     <div className={css.container}>
       <div className={css.logo}>Clothica</div>

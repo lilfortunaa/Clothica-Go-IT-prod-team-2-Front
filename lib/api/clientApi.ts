@@ -1,10 +1,17 @@
 import { nextServer, ApiError } from "./api";
 import type { User, RegisterRequest } from "@/types/user";
+import axios from "axios";
+
+// Локальний axios для Next.js API routes
+const localApi = axios.create({
+  baseURL: "/api",  // Це правильно
+  withCredentials: true,
+});
 
 export const login = async (phone: string, password: string): Promise<User> => {
   const cleanPhone = phone.replaceAll(/[\s()\-+]/g, "");
   try {
-    const res = await nextServer.post("/auth/login", { phone: cleanPhone, password });
+    const res = await localApi.post("/auth/login", { phone: cleanPhone, password });
     return res.data.user;
   } catch (err: any) {
     throw new Error(err.response?.data?.error || err.message || "Помилка авторизації");
@@ -18,7 +25,7 @@ export const register = async (payload: RegisterRequest): Promise<User> => {
     password: payload.password,
   };
   try {
-    const res = await nextServer.post<User>("/auth/register", cleanPayload);
+    const res = await localApi.post<User>("/auth/register", cleanPayload);
     return res.data;
   } catch (err: any) {
     throw new Error(err.response?.data?.error || err.message || "Помилка реєстрації");
@@ -27,21 +34,24 @@ export const register = async (payload: RegisterRequest): Promise<User> => {
 
 export const logout = async (): Promise<void> => {
   try {
-    await nextServer.post("/auth/logout");
-  } catch (err) {
-    const error = err as ApiError;
-    throw new Error(error.response?.data?.error || "Logout failed");
+    await localApi.post("/auth/logout", {}, { withCredentials: true });
+  } catch (err: any) {
+    throw new Error(err.response?.data?.error || "Logout failed");
   }
 };
 
 export const fetchUserProfile = async (): Promise<User> => {
-  const res = await nextServer.get("/users/me");
-  return res.data;
+  try {
+    const res = await localApi.get("/user/me");
+    return res.data;
+  } catch (err) {
+    throw new Error("Unauthorized");
+  }
 };
 
 export const updateUserProfile = async (payload: Partial<User>): Promise<User> => {
   try {
-    const { data } = await nextServer.patch<User>("/users/me", payload);
+    const { data } = await localApi.patch<User>("/user/me", payload);
     return data;
   } catch (err) {
     const error = err as ApiError;
@@ -51,7 +61,7 @@ export const updateUserProfile = async (payload: Partial<User>): Promise<User> =
 
 export const checkSession = async (): Promise<{ accessToken?: string }> => {
   try {
-    const res = await nextServer.get("/auth/session");
+    const res = await localApi.get("/auth/session");
     return res.data;
   } catch (err) {
     const error = err as ApiError;

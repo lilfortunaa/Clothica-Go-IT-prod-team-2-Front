@@ -9,6 +9,7 @@ import { login } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
 import type { User } from "@/types/user";
 import css from "./LoginForm.module.css";
+import { fetchUserProfile } from "@/lib/api/clientApi";
 
 const schema = Yup.object({
   phone: Yup.string().required("Введіть номер телефону"),
@@ -19,22 +20,34 @@ export default function LoginForm() {
   const router = useRouter();
   const setUser = useAuthStore((s) => s.setUser);
 
-  const handleSubmit = async (
-    values: { phone: string; password: string },
-    { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
-  ) => {
+const handleSubmit = async (
+  values: { phone: string; password: string },
+  { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
+) => {
+  try {
+    // 1. Викликаємо login (встановлює cookies)
+    const user: User = await login(values.phone, values.password);
+    
+    // 2. Оновлюємо Zustand store
+    setUser(user);
+    
+    // 3. Додатково завантажуємо user з backend через AuthProvider endpoint
     try {
-      const user: User = await login(values.phone, values.password);
-      setUser(user);
-      toast.success("Вітаємо, вхід успішно виконано!");
-      router.push("/");
-    } catch (err) {
-      const errorMessage = err instanceof Error ? err.message : "Помилка входу";
-      toast.error(errorMessage);
-    } finally {
-      setSubmitting(false);
+      const freshUser = await fetchUserProfile();
+      setUser(freshUser); // Перезаписуємо актуальними даними
+    } catch (error) {
+      console.log("Could not fetch fresh user, using login response");
     }
-  };
+    
+    toast.success("Вітаємо, вхід успішно виконано!");
+    router.push("/");
+  } catch (err) {
+    const errorMessage = err instanceof Error ? err.message : "Помилка входу";
+    toast.error(errorMessage);
+  } finally {
+    setSubmitting(false);
+  }
+};
 
   return (
     <div className={css.container}>

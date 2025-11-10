@@ -1,12 +1,15 @@
-"use client";
+'use client';
 
-import Link from "next/link";
+import PopularCategories from '@/components/CategoriesSection/PopularCategories';
+import Link from 'next/link';
 
 export default function HomePage() {
   return (
     <main className="min-h-screen flex items-center justify-center">
       <div className="flex flex-col gap-4 text-center">
-        <h1 className="text-3xl font-bold">Auth Test Page</h1>
+        <h1 className="text-3xl font-bold">
+          Auth Test Page
+        </h1>
 
         <Link
           href="/auth/register"
@@ -22,6 +25,7 @@ export default function HomePage() {
           Go to Login
         </Link>
       </div>
+      <PopularCategories />
     </main>
   );
 }

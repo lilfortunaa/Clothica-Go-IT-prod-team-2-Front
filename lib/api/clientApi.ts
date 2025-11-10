@@ -3,6 +3,7 @@ import type {
   User,
   RegisterRequest,
   Category,
+  Subscription,
 } from '@/types/user';
 
 export const login = async (
@@ -115,3 +116,13 @@ export const getCategories = async (): Promise<
     );
   }
 };
+
+export const postSubscription = async (email: string): Promise<Subscription[]> => {
+  try {
+    const { data } = await nextServer.post<Subscription[]>('/subscriptions', { email });
+    return data;
+  } catch (error) {
+    console.error('Failed to post subscription:', error);
+    return [];
+  }
+}

@@ -36,6 +36,18 @@ a {
   text-decoration: none;
 }
 
+.ButtonGreen:hover,
+.ButtonGreen:focus {
+  background-color: #9db484;
+  border: 1px solid #191919;
+}
+
+.ButtonGray:hover,
+.ButtonGray:focus {
+  background-color: #b2b2b2;
+  border: 1px solid rgba(0, 0, 0, 0.5);
+}
+
 @media (prefers-color-scheme: dark) {
   html {
     color-scheme: dark;

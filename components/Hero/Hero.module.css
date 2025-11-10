@@ -90,6 +90,10 @@
     display: flex;
     gap: 16px;
 }
+
+.heroDesc {
+    margin-right: 32px;
+}
 }
 
 @media screen and (min-width: 1440px) {

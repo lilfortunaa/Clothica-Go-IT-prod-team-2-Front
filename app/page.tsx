@@ -1,8 +1,8 @@
 'use client';
 
-import Image from "next/image";
-import styles from "./page.module.css";
-import Hero from "@/components/Hero/Hero";
+import Image from 'next/image';
+import styles from './page.module.css';
+import Hero from '@/components/Hero/Hero';
 
 import PopularCategories from '@/components/CategoriesSection/PopularCategories';
 import Link from 'next/link';

@@ -1,17 +1,16 @@
 import { Review } from "@/types/review";
-import { nextServer, localApi, ApiError } from "./api"; // ← Імпортуйте localApi
+import { nextServer, localApi, ApiError } from "./api";
 import type { User, RegisterRequest, Category } from "@/types/user";
 
-// AUTH (через Next.js API routes) - використовуємо localApi
 export const login = async (phone: string, password: string): Promise<User> => {
   const cleanPhone = phone.replaceAll(/[\s()\-+]/g, "");
   
   try {
-    const res = await localApi.post("/auth/login", { // ← localApi!
+    const res = await localApi.post("/auth/login", {
       phone: cleanPhone, 
       password 
     });
-    return res.data; // ← Змінили з res.data.user на res.data
+    return res.data;
   } catch (err: any) {
     const serverMessage = err.response?.data?.error || err.response?.data?.message;
     
@@ -34,7 +33,7 @@ export const register = async (payload: RegisterRequest): Promise<User> => {
   
   try {
     const res = await localApi.post('/auth/register', cleanPayload); // ← localApi!
-    return res.data; // ← Змінили з res.data.user на res.data
+    return res.data;
   } catch (err: any) {
     throw new Error(
       err.response?.data?.error ||
@@ -46,7 +45,7 @@ export const register = async (payload: RegisterRequest): Promise<User> => {
 
 export const logout = async (): Promise<void> => {
   try {
-    await localApi.post('/auth/logout'); // ← localApi!
+    await localApi.post('/auth/logout');
   } catch (err) {
     const error = err as ApiError;
     throw new Error(
@@ -57,7 +56,7 @@ export const logout = async (): Promise<void> => {
 
 export const fetchUserProfile = async (): Promise<User> => {
   try {
-    const res = await localApi.get("/user/me"); // ← localApi!
+    const res = await localApi.get("/user/me");
     return res.data;
   } catch (err) {
     throw new Error("Unauthorized");
@@ -80,7 +79,7 @@ export const updateUserProfile = async (
 
 export const checkSession = async (): Promise<{ accessToken?: string }> => {
   try {
-    const res = await localApi.get('/auth/session'); // ← localApi!
+    const res = await localApi.get('/auth/session');
     return res.data;
   } catch (err) {
     const error = err as ApiError;
@@ -90,7 +89,6 @@ export const checkSession = async (): Promise<{ accessToken?: string }> => {
   }
 };
 
-// ПУБЛІЧНІ ДАНІ (напряму на backend) - використовуємо nextServer
 export const getCategories = async (
   page: number = 1,
   perPage: number = 10

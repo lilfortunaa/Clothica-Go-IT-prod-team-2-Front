@@ -7,7 +7,6 @@ export async function POST(request: Request) {
   try {
     const { data, headers } = await api.post('/auth/register', body);
     
-    // Копіюємо Set-Cookie headers
     const setCookieHeader = headers['set-cookie'];
     
     const response = NextResponse.json(data);

@@ -29,7 +29,6 @@ export async function GET() {
   }
 }
 
-// PATCH - оновити дані користувача
 export async function PATCH(request: Request) {
   try {
     const cookieStore = await cookies();

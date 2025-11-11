@@ -2,9 +2,8 @@ import { nextServer, ApiError } from "./api";
 import type { User, RegisterRequest } from "@/types/user";
 import axios from "axios";
 
-// Локальний axios для Next.js API routes
 const localApi = axios.create({
-  baseURL: "/api",  // Це правильно
+  baseURL: "/api",
   withCredentials: true,
 });
 

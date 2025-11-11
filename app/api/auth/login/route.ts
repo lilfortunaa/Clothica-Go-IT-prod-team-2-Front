@@ -9,7 +9,6 @@ export async function POST(request: Request) {
   try {
     const { data, headers } = await api.post('/auth/login', body);
     
-    // Копіюємо Set-Cookie headers з backend
     const setCookieHeader = headers['set-cookie'];
     
     const response = NextResponse.json(data);

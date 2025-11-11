@@ -81,7 +81,7 @@ export default function RegistrationForm() {
         >
           {({ isSubmitting }) => (
             <Form className={css.form}>
-              {/* Name */}
+
               <div className={css.formGroup}>
                 <label htmlFor="firstName" className={css.label}>
                   Ім'я*
@@ -97,7 +97,6 @@ export default function RegistrationForm() {
                 <ErrorMessage name="firstName" component="span" className={css.errorText} />
               </div>
 
-              {/* Phone */}
               <div className={css.formGroup}>
                 <label htmlFor="phone" className={css.label}>
                   Номер телефону*
@@ -112,7 +111,6 @@ export default function RegistrationForm() {
                 <ErrorMessage name="phone" component="span" className={css.errorText} />
               </div>
 
-              {/* Password */}
               <div className={css.formGroup}>
                 <label htmlFor="password" className={css.label}>
                   Пароль*
@@ -128,7 +126,6 @@ export default function RegistrationForm() {
                 <ErrorMessage name="password" component="span" className={css.errorText} />
               </div>
 
-              {/* Submit */}
               <button
                 type="submit"
                 className={css.submitButton}

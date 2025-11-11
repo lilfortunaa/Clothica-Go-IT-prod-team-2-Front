@@ -19,7 +19,6 @@ export default function ProfilePage() {
     router.push("/");
   };
 
-  // Якщо user ще завантажується
   if (!user) {
     return (
       <div className={css.loading}>
@@ -33,7 +32,6 @@ export default function ProfilePage() {
       <div className={css.container}>
         <h1 className={css.title}>Кабінет</h1>
 
-        {/* Блок "Замовлення" */}
         <section className={css.section}>
           <h2 className={css.sectionTitle}>Мої транзакції</h2>
           <div className={css.emptyState}>
@@ -47,7 +45,6 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        {/* Блок "Особиста інформація" */}
         <section className={css.section}>
           <h2 className={css.sectionTitle}>Особиста інформація</h2>
           <div className={css.userInfo}>
@@ -72,7 +69,6 @@ export default function ProfilePage() {
           </div>
         </section>
 
-        {/* Кнопка виходу */}
         <button 
           onClick={handleLogout}
           className={css.logoutButton}

@@ -13,7 +13,7 @@ export default function LoginPage() {
   useEffect(() => {
     if (needsAuth === 'true' && !hasShownToast.current) {
       toast.error("Для доступу до цієї сторінки потрібна авторизація", {
-        id: 'auth-required', // ← Унікальний ID щоб не дублювати
+        id: 'auth-required',
       });
       hasShownToast.current = true;
     }

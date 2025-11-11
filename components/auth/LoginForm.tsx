@@ -3,7 +3,7 @@
 import { Formik, Form, Field, ErrorMessage } from "formik";
 import * as Yup from "yup";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter, useSearchParams } from "next/navigation";
 import toast from "react-hot-toast";
 import { login } from "@/lib/api/clientApi";
 import { useAuthStore } from "@/lib/store/authStore";
@@ -18,6 +18,8 @@ const schema = Yup.object({
 
 export default function LoginForm() {
   const router = useRouter();
+  const searchParams = useSearchParams();
+  const redirect = searchParams.get("redirect") || "/";
   const setUser = useAuthStore((s) => s.setUser);
 
 const handleSubmit = async (
@@ -25,7 +27,7 @@ const handleSubmit = async (
   { setSubmitting }: { setSubmitting: (isSubmitting: boolean) => void }
 ) => {
   try {
-    // 1. Викликаємо login (встановлює cookies)
+    // 1. Логін
     const user: User = await login(values.phone, values.password);
     
     // 2. Оновлюємо Zustand store
@@ -36,11 +38,11 @@ const handleSubmit = async (
       const freshUser = await fetchUserProfile();
       setUser(freshUser); // Перезаписуємо актуальними даними
     } catch (error) {
-      console.log("Could not fetch fresh user, using login response");
+      console.log("Could not fetch fresh user");
     }
     
     toast.success("Вітаємо, вхід успішно виконано!");
-    router.push("/");
+    router.push(redirect);
   } catch (err) {
     const errorMessage = err instanceof Error ? err.message : "Помилка входу";
     toast.error(errorMessage);

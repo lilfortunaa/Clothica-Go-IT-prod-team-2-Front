@@ -1,34 +1,28 @@
-import { nextServer, ApiError } from './api';
-import type {
-  User,
-  RegisterRequest,
-  Category,
-} from '@/types/user';
+import { nextServer, ApiError } from "./api";
+import type { User, RegisterRequest, Category } from "@/types/user";
 
 
-export const login = async (
-  phone: string,
-  password: string
-): Promise<User> => {
-  const cleanPhone = phone.replaceAll(/[\s()\-+]/g, '');
+
+export const login = async (phone: string, password: string): Promise<User> => {
+  const cleanPhone = phone.replaceAll(/[\s()\-+]/g, "");
   try {
-    const res = await nextServer.post('/auth/login', {
-      phone: cleanPhone,
-      password,
-    });
+    const res = await nextServer.post("/auth/login", { phone: cleanPhone, password });
     return res.data.user;
   } catch (err: any) {
-    throw new Error(
-      err.response?.data?.error ||
-        err.message ||
-        'Помилка авторизації'
-    );
+    const serverMessage = err.response?.data?.error || err.response?.data?.message;
+    
+    if (err.response?.status === 401) {
+      throw new Error("Невірний номер телефону або пароль");
+    } else if (serverMessage) {
+      throw new Error(serverMessage);
+    } else {
+      throw new Error(err.message || "Помилка авторизації");
+    }
   }
 };
 
-export const register = async (
-  payload: RegisterRequest
-): Promise<User> => {
+
+export const register = async (payload: RegisterRequest): Promise<User> => {
   const cleanPayload = {
     firstName: payload.firstName.trim(),
     phone: payload.phone
@@ -63,9 +57,13 @@ export const logout = async (): Promise<void> => {
 };
 
 export const fetchUserProfile = async (): Promise<User> => {
-  const res = await nextServer.get('/users/me');
-  return res.data;
-};
+  try {
+    const res = await nextServer.get("/user/me");
+    return res.data;
+  } catch (err) {
+    throw new Error("Unauthorized");
+  };
+}
 
 export const updateUserProfile = async (
   payload: Partial<User>

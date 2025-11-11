@@ -5,6 +5,7 @@ import type {
   Category,
 } from '@/types/user';
 
+
 export const login = async (
   phone: string,
   password: string
@@ -116,3 +117,15 @@ export const getCategories = async (
     );
   }
 };
+
+export const sendSubscription = async (email: string) => {
+  try {
+    const res = await nextServer.post('/subscriptions', { email })
+    return res.data.message 
+  } catch (err: any) {
+    if (err.response?.status === 409) {
+      throw new Error('Цей email вже підписаний')
+    }
+    throw new Error('Сталася помилка, спробуйте пізніше')
+  }
+}

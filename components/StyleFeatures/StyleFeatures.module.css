@@ -6,8 +6,7 @@
 .container {
     width: 100%;
     padding: 0 20px;
-    margin-left: auto;
-    margin-right: auto;
+    margin: 0 auto;
 }
 
 .title {
@@ -41,15 +40,17 @@
 }
 
 .iconComfort {
-    background-image: url("/StyleFeatures/StyleImg/1.png");
+    background-image: url("/StyleImg/3.png");
 }
 
 .iconNatural {
-    background-image: url("/StyleFeatures/StyleImg/2.png");
+
+    background-image: url("/StyleImg/1.png");
 }
 
 .iconUniversal {
-    background-image: url("/StyleFeatures/StyleImg/3.png");
+    background-image: url("/StyleImg/2.png");
+
 }
 
 .cardTitle {
@@ -68,6 +69,7 @@
     line-height: 1.5;
     color: var(--main-color-light);
     text-align: left;
+
 }
 
 @media (min-width: 375px) {
@@ -86,17 +88,24 @@
     .list {
         flex-direction: row;
         justify-content: center;
+        gap: 32px;
     }
 
-    .item {
-        width: calc((100%-64px)/3);
-    }
+
 }
 
 @media (min-width: 1440px) {
     .style {
         padding-top: 48px;
         padding-bottom: 48px;
+    }
+
+    .title {
+        max-width: 508px;
+    }
+
+    .item {
+        max-width: 456px;
     }
 
     .container {

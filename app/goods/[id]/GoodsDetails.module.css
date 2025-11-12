@@ -7,6 +7,7 @@
   box-sizing: border-box;
   padding-bottom: 64px;
   padding-top: 64px;
+  background: #f3f9ed;
 }
 
 .imageWrapper {
@@ -44,6 +45,8 @@
   padding-top: 35px;
   padding-bottom: 24px;
   justify-content: space-between;
+  overflow: hidden;
+  gap: 4px;
 }
 .link {
   font-family: 'Inter', sans-serif;
@@ -54,6 +57,20 @@
   line-height: 1.5;
   text-align: center;
   color: #000;
+  white-space: nowrap;
+}
+.link:last-child {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  flex: 1;
+  min-width: 0;
+}
+.link:last-child a {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  display: block;
 }
 .svg {
   width: 5px;
@@ -67,6 +84,11 @@
 }
 .titleDiv {
   padding-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  flex-wrap: wrap;
 }
 
 .title {
@@ -81,12 +103,12 @@
   padding-bottom: 24px;
   align-items: center;
 }
+
 .price {
   display: flex;
-  justify-content: space-between;
   align-items: center;
 }
-list .textTitel {
+.textTitel {
   font-family: 'Nunito Sans', sans-serif;
   font-weight: 400;
   font-size: 20px;
@@ -95,8 +117,16 @@ list .textTitel {
   line-height: 1.4;
   letter-spacing: -0.01em;
   color: #000;
+  position: relative;
+  padding-right: 16px;
 }
 
+.textTitel::after {
+  content: '|';
+  margin-left: 16px;
+  color: black;
+  opacity: 0.2;
+}
 .svgPrice {
   width: 16px;
   height: 16px;
@@ -104,15 +134,32 @@ list .textTitel {
 }
 .rating {
   display: flex;
-  gap: 8px;
+  gap: 4px;
+  text-align: center;
+  flex-wrap: nowrap;
 }
 .stars {
   display: flex;
+  align-items: center;
   gap: 4px;
 }
+.ratingText {
+  display: flex;
+  gap: 8px;
+  justify-content: space-between;
+  font-family: 'Inter', sans-serif;
+  font-weight: 400;
+  font-size: 14px;
+
+  /* line-height: 21px; */
+  line-height: 1.5;
+  text-align: center;
+  color: #000;
+}
+
 .svgpPrice {
-  width: 10px;
-  height: 28px;
+  max-width: 10px;
+  max-height: 28px;
   stroke: black;
   stroke-opacity: 0.2;
 }
@@ -152,6 +199,10 @@ list .textTitel {
   line-height: 1.5;
   color: #000;
   appearance: none;
+  transition:
+    border-color 0.2s ease,
+    background 0.2s ease,
+    color 0.2s ease;
 }
 
 .selectArrow {
@@ -165,6 +216,15 @@ list .textTitel {
   fill: black;
   fill-opacity: 0.6;
 }
+.formSize:focus,
+.inputQuantity:focus,
+.buttonBuy:focus,
+.selectArrow:focus {
+  border: 1px solid rgba(0, 0, 0, 0.5);
+  background: rgba(0, 0, 0, 0.15);
+  color: #000;
+  outline: none;
+}
 
 .formSize:hover,
 .inputQuantity:hover,
@@ -172,6 +232,8 @@ list .textTitel {
 .selectArrow:hover {
   border: 1px solid rgba(0, 0, 0, 0.5);
   background: rgba(0, 0, 0, 0.15);
+  color: #000;
+  outline: none;
 }
 .formSize:active,
 .inputQuantity:active,
@@ -181,6 +243,8 @@ list .textTitel {
   background: rgba(0, 0, 0, 0.5);
   color: #fff;
   fill: black;
+  color: #000;
+  outline: none;
 }
 .formButtons {
   display: flex;
@@ -188,13 +252,15 @@ list .textTitel {
   padding-bottom: 20px;
 }
 .buttonBasket {
+  display: flex;
   border: 1px solid #c5e1a5;
   border-radius: 100px;
   padding-block: 6px;
   padding-inline: 12px;
   width: 100%;
   max-width: 255px;
-
+  justify-content: center;
+  align-items: center;
   height: 36px;
   background: #c5e1a5;
   font-family: 'Inter', sans-serif;
@@ -226,6 +292,7 @@ list .textTitel {
   background: rgba(255, 255, 255, 0);
 }
 .buttonBuy {
+  display: flex;
   border: 1px solid rgba(255, 255, 255, 0);
   border-radius: 100px;
   padding-block: 6px;
@@ -237,7 +304,8 @@ list .textTitel {
   font-family: 'Inter', sans-serif;
   font-weight: 500;
   font-size: 16px;
-
+  justify-content: center;
+  align-items: center;
   /* line-height: 24px; */
   line-height: 1.5;
   color: #000;
@@ -307,4 +375,62 @@ list .textTitel {
   color: #000;
   white-space: pre-line;
   padding-right: 4px;
+}
+
+@media (min-width: 768px) {
+  .categoriesSection {
+    width: 100%;
+    max-width: 768px;
+    padding-left: 32px;
+    padding-right: 32px;
+    display: flex;
+    gap: 32px;
+  }
+  .imageWrapper {
+    max-width: 336px;
+    aspect-ratio: 336 / 358;
+    max-height: 358px;
+  }
+
+  .listSection {
+    width: 336px;
+  }
+
+  .list {
+    padding-top: 0px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .categoriesSection {
+    width: 100%;
+    max-width: 1440px;
+    padding-left: 64px;
+    padding-right: 64px;
+    padding-top: 112px;
+    padding-bottom: 112px;
+  }
+  .imageWrapper {
+    max-width: 640px;
+    aspect-ratio: 640 / 682;
+    max-height: 682px;
+  }
+
+  .listSection {
+    width: 640px;
+  }
+
+  .list {
+    padding-top: 0px;
+  }
+
+  .formSize {
+    max-width: 640px;
+  }
+  .buttonBasket {
+    max-width: 560px;
+  }
+  .buttonBuy {
+    max-width: 640px;
+  }
 }

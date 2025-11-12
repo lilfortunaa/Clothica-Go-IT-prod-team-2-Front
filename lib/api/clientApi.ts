@@ -1,3 +1,4 @@
+import { Review } from '@/types/review';
 import { nextServer, ApiError } from './api';
 import type {
   User,
@@ -156,5 +157,26 @@ export const getGoodById = async (
       error.response?.data?.error ||
         'Не вдалося отримати товар'
     );
+  }
+};
+
+interface fetchReviewsResponse {
+  page: number;
+  perPage: number;
+  totalFeedbacks: number;
+  totalPages: number;
+  feedbacks: Review[];
+}
+
+export const fetchReviews = async (): Promise<Review[]> => {
+  try {
+    const response =
+      await nextServer.get<fetchReviewsResponse>(
+        '/feedbacks?perPage=10'
+      );
+    return response.data.feedbacks || [];
+  } catch (error) {
+    console.error('Error fetching reviews:', error);
+    throw error;
   }
 };

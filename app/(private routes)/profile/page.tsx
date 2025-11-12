@@ -1,8 +1,11 @@
 "use client"
 
-import css from "./ProfilePage.module.css"
-
-import { useState } from "react";
+import { useAuthStore } from '@/lib/store/authStore';
+import { logout as apiLogout } from '@/lib/api/clientApi';
+import { useRouter } from 'next/navigation';
+import { useState } from 'react'
+import toast from 'react-hot-toast';
+import css from './ProfilePage.module.css';
 import Link from "next/link";
 
 const ProfilePage = () => {
@@ -12,6 +15,26 @@ const ProfilePage = () => {
   const [city, setCity] = useState<string>("");
   const [post, setPost] = useState<number>();
   const [comment, setComment] = useState<string>("");
+
+  const { user, clearAuth } = useAuthStore();
+  const router = useRouter();
+
+  const handleLogout = async () => {
+    try {
+      await apiLogout();
+    } catch {}
+    clearAuth();
+    toast.success('Ви вийшли з системи');
+    router.push('/');
+  };
+
+  if (!user) {
+    return (
+      <div className={css.loading}>
+        <p>Завантаження профілю...</p>
+      </div>
+    );
+  }
 
   return (
     <>
@@ -85,10 +108,9 @@ const ProfilePage = () => {
               </li>
         </ul>)}
         </div>
-        <button type="button">Вийти з кабінету</button>
+        <button type="button" onClick={handleLogout}
+          className={css.logoutButton}>Вийти з кабінету</button>
       </div>
       </>
   );
 };
-
-export default ProfilePage;

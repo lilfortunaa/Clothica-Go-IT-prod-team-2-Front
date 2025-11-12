@@ -21,14 +21,3 @@ export interface LoginRequest {
   password: string;
 }
 
-export type Category = {
-  _id: string;
-  name: string;
-  image: string;
-  goodsCount?: number;
-};
-
-export type Subscription = {
-  _id: string;
-  email: string;
-}

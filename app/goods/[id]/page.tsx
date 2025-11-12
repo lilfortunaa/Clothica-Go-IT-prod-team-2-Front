@@ -216,7 +216,7 @@ export default function GoodByIdPage() {
             <strong className={css.characteristicText}>
               Доступні розміри:
             </strong>
-            {good['size'][0]} –{' '}
+
             {good['size'][good['size'].length - 1]}
           </li>
         </ul>

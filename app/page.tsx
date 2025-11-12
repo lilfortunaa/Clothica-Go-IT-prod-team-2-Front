@@ -1,21 +1,16 @@
-import PopularGoods from "../components/PopularGoods/PopularGoods"
+import PopularGoods from '../components/PopularGoods/PopularGoods';
+import Hero from '@/components/Hero/Hero';
+import ReviewsList from '@/components/ReviewsList/ReviewsList';
+import PopularCategories from '@/components/CategoriesSection/PopularCategories';
+import StyleFeatures from '@/components/StyleFeatures/StyleFeatures';
 
-async function getGoods() {
-  const res = await fetch(
-    "https://clothica-go-it-prod-team-2-back.onrender.com/api/goods",
-    { cache: "no-store" }
-  );
-
-  const json = await res.json();
-  return json.data; 
-}
-
-export default async function HomePage() {
-  const goods = await getGoods();
-
-  console.log("GOODS FROM BACKEND:", goods);
-
+export default function HomePage() {
   return (
-    <PopularGoods goods={goods} />
+    <main className="min-h-screen flex items-center justify-center">
+      <Hero />
+      <StyleFeatures />
+      <PopularCategories />
+      <ReviewsList />
+    </main>
   );
 }

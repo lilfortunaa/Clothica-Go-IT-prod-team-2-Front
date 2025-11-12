@@ -1,9 +1,7 @@
 'use client';
 
-import { useRef, useEffect, useState } from 'react';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Pagination, Navigation } from 'swiper/modules';
-import { Good } from '@/types/goods';
 import 'swiper/css';
 import 'swiper/css/pagination';
 import 'swiper/css/navigation';
@@ -11,65 +9,22 @@ import 'swiper/css/navigation';
 import styles from './PopularGoods.module.css';
 import Link from 'next/link';
 import Image from 'next/image';
+import { useQuery } from '@tanstack/react-query';
 import { getGoodsbyFeedback } from '@/lib/api/clientApi';
+import { Good } from '@/types/goods';
 
 const PopularGoods = () => {
-  const prevRef = useRef<HTMLButtonElement | null>(null);
-  const nextRef = useRef<HTMLButtonElement | null>(null);
-  const paginationRef = useRef<HTMLDivElement | null>(null);
+  const {
+    data: goods,
+    isLoading,
+    isError,
+  } = useQuery<Good[]>({
+    queryKey: ['popularGoods'],
+    queryFn: () =>
+      getGoodsbyFeedback({ page: 1, perPage: 10 }),
+  });
 
-  const [goods, setGoods] = useState<Good[] | null>(null);
-
-  useEffect(() => {
-    const fetchPopularGoods = async () => {
-      try {
-        const data = await getGoodsbyFeedback({
-          page: 1,
-          perPage: 10,
-        });
-        setGoods(data);
-      } catch (err) {
-        console.error(err);
-        setGoods([]);
-      }
-    };
-    fetchPopularGoods();
-  }, []);
-
-  useEffect(() => {
-    const updatePaginationPosition = () => {
-      if (!paginationRef.current) return;
-
-      if (window.innerWidth < 768) {
-        paginationRef.current.style.display = 'flex';
-        paginationRef.current.style.justifyContent =
-          'flex-start';
-        paginationRef.current.style.left = '20px';
-        paginationRef.current.style.transform = 'none';
-      } else {
-        paginationRef.current.style.justifyContent =
-          'center';
-        paginationRef.current.style.left = '50%';
-        paginationRef.current.style.transform =
-          'translateX(-50%)';
-      }
-    };
-
-    const handleResize = () => requestAnimationFrame(updatePaginationPosition);
-
-    window.addEventListener(
-      'resize',
-      updatePaginationPosition
-    );
-    updatePaginationPosition();
-    return () =>
-      window.removeEventListener(
-        'resize',
-        handleResize
-      );
-  }, []);
-
-  if (goods === null) {
+  if (isLoading) {
     return (
       <section className={styles.wrapper}>
         <div className={styles.header}>
@@ -83,7 +38,7 @@ const PopularGoods = () => {
     );
   }
 
-  if (goods.length === 0) return null;
+  if (isError || !goods || goods.length === 0) return null;
 
   return (
     <section className={styles.wrapper}>
@@ -100,31 +55,12 @@ const PopularGoods = () => {
         modules={[Navigation, Pagination]}
         spaceBetween={16}
         slidesPerView={1}
+        navigation
+        pagination={{ clickable: true }}
         breakpoints={{
           375: { slidesPerView: 1 },
           768: { slidesPerView: 2 },
           1440: { slidesPerView: 4 },
-        }}
-        onBeforeInit={swiper => {
-          if (prevRef.current && nextRef.current) {
-            (swiper.params.navigation as any).prevEl =
-              prevRef.current;
-            (swiper.params.navigation as any).nextEl =
-              nextRef.current;
-          }
-          if (paginationRef.current) {
-            (swiper.params.pagination as any).el =
-              paginationRef.current;
-          }
-        }}
-        onSwiper={swiper => {
-          setTimeout(() => {
-            swiper.navigation?.init();
-            swiper.navigation?.update();
-            swiper.pagination?.init();
-            swiper.pagination?.render();
-            swiper.pagination?.update();
-          }, 0);
         }}
         className={styles.slider}
       >
@@ -177,35 +113,6 @@ const PopularGoods = () => {
           </SwiperSlide>
         ))}
       </Swiper>
-
-      <div className={styles.paginationWrapper}>
-        <div
-          ref={paginationRef}
-          className="swiper-pagination"
-          suppressHydrationWarning
-        ></div>
-      </div>
-
-      <div className={styles.navButtons}>
-        <button
-          ref={prevRef}
-          className={styles.navPrev}
-          aria-label="Назад"
-        >
-          <svg className={styles.iconArrow}>
-            <use href="/sprite.svg#icon-arrow-back" />
-          </svg>
-        </button>
-        <button
-          ref={nextRef}
-          className={styles.navNext}
-          aria-label="Вперед"
-        >
-          <svg className={styles.iconArrow}>
-            <use href="/sprite.svg#icon-arrow-forward" />
-          </svg>
-        </button>
-      </div>
     </section>
   );
 };

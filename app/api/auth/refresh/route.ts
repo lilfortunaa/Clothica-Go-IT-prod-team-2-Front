@@ -17,7 +17,7 @@ export async function POST(req: NextRequest) {
 
     const apiRes = await api.post('/auth/refresh', null, {
       headers: {
-        Cookie: cookieHeader, 
+        Cookie: cookieHeader,
       },
     });
 

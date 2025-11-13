@@ -4,6 +4,25 @@ import type { User, RegisterRequest } from "@/types/user";
 import { Category } from "@/types/category";
 import { GetGoodsParams, Good } from "@/types/goods";
 
+export const register = async (payload: RegisterRequest): Promise<User> => {
+  const cleanPayload = {
+    firstName: payload.firstName.trim(),
+    phone: payload.phone.trim().replaceAll(/[\s()\-+]/g, ''),
+    password: payload.password,
+  };
+  
+  try {
+    const res = await localApi.post('/auth/register', cleanPayload); 
+    return res.data;
+  } catch (err: any) {
+    throw new Error(
+      err.response?.data?.error ||
+      err.message ||
+      'Помилка реєстрації'
+    );
+  }
+};
+
 export const login = async (phone: string, password: string): Promise<User> => {
   const cleanPhone = phone.replaceAll(/[\s()\-+]/g, "");
   
@@ -22,25 +41,6 @@ export const login = async (phone: string, password: string): Promise<User> => {
     } else {
       throw new Error(err.message || "Помилка авторизації");
     }
-  }
-};
-
-export const register = async (payload: RegisterRequest): Promise<User> => {
-  const cleanPayload = {
-    firstName: payload.firstName.trim(),
-    phone: payload.phone.trim().replaceAll(/[\s()\-+]/g, ''),
-    password: payload.password,
-  };
-  
-  try {
-    const res = await localApi.post('/auth/register', cleanPayload); 
-    return res.data;
-  } catch (err: any) {
-    throw new Error(
-      err.response?.data?.error ||
-      err.message ||
-      'Помилка реєстрації'
-    );
   }
 };
 
@@ -78,7 +78,19 @@ export const updateUserProfile = async (
   }
 };
 
-export const checkSession = async (): Promise<{ accessToken?: string }> => {
+export const refreshAccessToken = async (): Promise<{ accessToken: string }> => {
+  try {
+    const res = await localApi.post('/auth/refresh');
+    return res.data;
+  } catch (err) {
+    const error = err as ApiError;
+    throw new Error(
+      error.response?.data?.error || 'Refresh token failed'
+    );
+  }
+};
+
+export const checkSession = async (): Promise<{ message?: string }> => {
   try {
     const res = await localApi.get('/auth/session');
     return res.data;
@@ -89,8 +101,6 @@ export const checkSession = async (): Promise<{ accessToken?: string }> => {
     );
   }
 };
-
-
 
 export const getCategories = async (
   page: number = 1,

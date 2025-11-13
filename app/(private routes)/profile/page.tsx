@@ -6,7 +6,6 @@ import { useRouter } from 'next/navigation';
 import { useState } from 'react'
 import toast from 'react-hot-toast';
 import css from './ProfilePage.module.css';
-import Link from "next/link";
 
 const ProfilePage = () => {
   const [firstName, setFirstName] = useState<string>("");
@@ -37,10 +36,10 @@ const ProfilePage = () => {
   }
 
   return (
-    <>
+    <main className={css.main}>
     <div className={css.container}>
       <h1 className={css.titleProfilePage}>Кабінет</h1>
-      <div className={css.containerPageProfileFirst}>
+      <section className={css.containerPageProfileFirst}>
         <form className={css.profileInfo}>
           <h2 className={css.titleForm}>Особиста інформація</h2>
           <label htmlFor="firstName">Ім'я*:</label>
@@ -94,23 +93,29 @@ const ProfilePage = () => {
               Зберегти зміни
             </button>
         </form>
-      </div>
-      <div className={css.containerPageProfileSecond}>
+      </section>
+      <section className={css.containerPageProfileSecond}>
         {true ? (<div className={css.messageNoInfo}>
           <p className={css.textMessageNoInfo}>У вас ще не було жодних замовлень! Мерщій до покупок!</p>
-          <Link href="/goods" className={css.linkMessageNoInfo}>До покупок</Link>
-        </div>) : (<ul>
+          <button onClick={() => router.push('/goods')} className={css.linkMessageNoInfo}>До покупок</button>
+        </div>) : (<ul className={css.transactionList}>
               <li className={css.transactionItem}>
-                <p className={css.transactionItemText}><strong>Дата:</strong></p>
-                <p className={css.transactionItemText}><strong>Номер замовлення:</strong></p>
-                <p className={css.transactionItemText}><strong>Сума:</strong></p>
-                <p className={css.transactionItemText}><strong>Статус:</strong></p>
+                <p className={css.transactionItemText}><span>Дата:</span></p>
+              </li>
+              <li className={css.transactionItem}>
+                <p className={css.transactionItemText}><span>Номер замовлення:</span></p>
+                </li>
+              <li className={css.transactionItem}>
+                <p className={css.transactionItemText}><span>Сума:</span></p>
+              </li>
+              <li className={css.transactionItem}>
+                <p className={css.transactionItemText}><span>Статус:</span></p>
               </li>
         </ul>)}
-        </div>
+        </section>
         <button type="button" onClick={handleLogout}
           className={css.logoutButton}>Вийти з кабінету</button>
       </div>
-      </>
+      </main>
   );
 };

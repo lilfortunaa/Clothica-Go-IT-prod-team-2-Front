@@ -17,6 +17,7 @@
     "next": "^16.0.1",
     "react": "^19.2.0",
     "react-dom": "^19.2.0",
+    "react-flexible-star-rating": "^1.0.7",
     "react-hot-toast": "^2.6.0",
     "react-input-mask": "^2.0.4",
     "react-responsive": "^10.0.1",

@@ -1,17 +1,13 @@
 'use client';
 
-import { useBasketStore } from '@/lib/store/basketStore';
+import {
+  BasketItem,
+  useBasketStore,
+} from '@/lib/store/basketStore';
 import styles from './BasketModal.module.css';
 
 type GoodsOrderListProps = {
-  items: {
-    id: string;
-    name: string;
-    price: number;
-    quantity: number;
-    image?: string;
-    size?: string;
-  }[];
+  items: BasketItem[];
 };
 
 export default function GoodsOrderList({
@@ -20,16 +16,22 @@ export default function GoodsOrderList({
   const { updateQuantity, removeFromBasket } =
     useBasketStore();
 
-  const total = items.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
+  const handleQuantityChange = (
+    id: string,
+    newQty: number
+  ) => {
+    if (newQty < 1) removeFromBasket(id);
+    else updateQuantity(id, newQty);
+  };
 
   return (
     <div className={styles.orderList}>
       <ul className={styles.list}>
         {items.map(item => (
-          <li key={item.id} className={styles.listItem}>
+          <li
+            key={`${item._id}-${item.size}`}
+            className={styles.listItem}
+          >
             <div className={styles.itemInfo}>
               {item.image && (
                 <img
@@ -48,7 +50,8 @@ export default function GoodsOrderList({
                   </p>
                 )}
                 <p className={styles.itemPriceSingle}>
-                  {item.price} грн / од.
+                  {item.price.value.toLocaleString()}{' '}
+                  {item.price.currency} / од.
                 </p>
 
                 <div className={styles.qtyControl}>
@@ -57,8 +60,8 @@ export default function GoodsOrderList({
                     min={1}
                     value={item.quantity}
                     onChange={e =>
-                      updateQuantity(
-                        item.id,
+                      handleQuantityChange(
+                        item._id,
                         Number(e.target.value)
                       )
                     }
@@ -70,37 +73,29 @@ export default function GoodsOrderList({
 
             <div className={styles.itemRight}>
               <p className={styles.itemTotalPrice}>
-                {item.price * item.quantity} грн
+                {(
+                  item.price.value * item.quantity
+                ).toLocaleString()}{' '}
+                {item.price.currency}
               </p>
 
               <button
                 className={styles.removeBtn}
-                onClick={() => removeFromBasket(item.id)}
+                onClick={() => removeFromBasket(item._id)}
                 aria-label="Видалити товар"
               >
-                <svg className={styles.iconRemove}>
-                  <use href="/icons/sprite.svg#icon-close"></use>
+                <svg
+                  className={styles.iconRemove}
+                  width={20}
+                  height={20}
+                >
+                  <use href="/sprite.svg#icon-close"></use>
                 </svg>
               </button>
             </div>
           </li>
         ))}
       </ul>
-
-      <div className={styles.summary}>
-        <div className={styles.row}>
-          <span>Проміжний підсумок</span>
-          <span>{total.toLocaleString()} грн</span>
-        </div>
-        <div className={styles.row}>
-          <span>Доставка</span>
-          <span>—</span>
-        </div>
-        <div className={styles.totalRow}>
-          <span>Всього</span>
-          <span>{total.toLocaleString()} грн</span>
-        </div>
-      </div>
     </div>
   );
 }

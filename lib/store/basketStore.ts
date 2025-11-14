@@ -1,42 +1,38 @@
 import { create } from 'zustand';
 
-type BasketItem = {
-  id: string;
+export type BasketItem = {
+  _id: string;
   name: string;
-  price: number;
-  quantity: number;
+  price: { value: number; currency: string };
   image?: string;
   size?: string;
+  quantity: number;
+  description?: string;
 };
 
 type BasketState = {
   items: BasketItem[];
   addToBasket: (item: BasketItem) => void;
   removeFromBasket: (id: string) => void;
-  updateQuantity: (id: string, qty: number) => void;
   clearBasket: () => void;
-
-  isBasketOpen: boolean;
-  openBasket: () => void;
-  closeBasket: () => void;
-
-  totalQuantity: () => number;
+  updateQuantity: (id: string, quantity: number) => void;
+  getTotalPrice: () => number;
+  addTestItems: () => void;
 };
 
 export const useBasketStore = create<BasketState>(
   (set, get) => ({
     items: [],
 
-    addToBasket: (item: BasketItem) =>
+    addToBasket: item => {
       set(state => {
-        const existing = state.items.find(
-          i => i.id === item.id && i.size === item.size
+        const exists = state.items.find(
+          i => i._id === item._id
         );
-
-        if (existing) {
+        if (exists) {
           return {
             items: state.items.map(i =>
-              i.id === item.id && i.size === item.size
+              i._id === item._id
                 ? {
                     ...i,
                     quantity: i.quantity + item.quantity,
@@ -45,33 +41,58 @@ export const useBasketStore = create<BasketState>(
             ),
           };
         }
-
         return { items: [...state.items, item] };
-      }),
+      });
+    },
 
-    removeFromBasket: (id: string) =>
+    removeFromBasket: id =>
       set(state => ({
-        items: state.items.filter(i => i.id !== id),
-      })),
-
-    updateQuantity: (id: string, qty: number) =>
-      set(state => ({
-        items: state.items.map(i =>
-          i.id === id ? { ...i, quantity: qty } : i
-        ),
+        items: state.items.filter(i => i._id !== id),
       })),
 
     clearBasket: () => set({ items: [] }),
 
-    isBasketOpen: false,
-    openBasket: () => set({ isBasketOpen: true }),
-    closeBasket: () => set({ isBasketOpen: false }),
+    updateQuantity: (id, quantity) =>
+      set(state => ({
+        items: state.items.map(i =>
+          i._id === id ? { ...i, quantity } : i
+        ),
+      })),
 
-    totalQuantity: () =>
+    getTotalPrice: () =>
       get().items.reduce(
-        (sum: number, item: BasketItem) =>
-          sum + item.quantity,
+        (sum, item) =>
+          sum + item.price.value * item.quantity,
         0
       ),
+
+    addTestItems: () => {
+      set({
+        items: [
+          {
+            _id: '6877b9f116ae59c7b60d0135',
+            name: "Сукня Office Chic Navy'",
+            price: { value: 2599, currency: 'грн' },
+            image:
+              'https://ftp.goit.study/img/goods/6877b9f116ae59c7b60d0135.webp',
+            quantity: 1,
+            size: 'M',
+            description:
+              'Office Chic Navy — елегантна офісна сукня...',
+          },
+          {
+            _id: '6877b9f116ae59c7b60d0136',
+            name: 'Сукня Evening Red',
+            price: { value: 3499, currency: 'грн' },
+            image:
+              'https://ftp.goit.study/img/goods/6877b9f116ae59c7b60d0136.webp',
+            quantity: 2,
+            size: 'L',
+            description:
+              'Evening Red — розкішна вечірня сукня...',
+          },
+        ],
+      });
+    },
   })
 );

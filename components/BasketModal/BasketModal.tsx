@@ -9,48 +9,34 @@ import MessageNoInfo from './MessageNoInfo';
 
 export default function BasketModal() {
   const router = useRouter();
-  const { items, clearBasket } = useBasketStore();
-
+  const { items, getTotalPrice, clearBasket } =
+    useBasketStore();
   const handleKeyDown = useCallback(
     (e: KeyboardEvent) => {
-      if (e.key === 'Escape') router.back();
+      if (e.key === 'Escape') {
+        router.back();
+      }
     },
     [router]
   );
 
   useEffect(() => {
     document.addEventListener('keydown', handleKeyDown);
-    return () =>
+    document.body.style.overflow = 'hidden';
+
+    return () => {
       document.removeEventListener(
         'keydown',
         handleKeyDown
       );
+      document.body.style.overflow = 'unset';
+    };
   }, [handleKeyDown]);
 
   const handleBackdropClick = (
     e: React.MouseEvent<HTMLDivElement>
   ) => {
     if (e.target === e.currentTarget) router.back();
-  };
-
-  const handleCheckout = async () => {
-    if (items.length === 0) return;
-
-    try {
-      const orderData = {
-        items: items.map(item => ({
-          goodId: item.id,
-          qty: item.quantity,
-          price: item.price,
-          size: item.size || 'M',
-        })),
-      };
-    } catch (error) {
-      console.error(
-        '❌ Помилка при оформленні замовлення:',
-        error
-      );
-    }
   };
 
   return (
@@ -62,6 +48,7 @@ export default function BasketModal() {
         <button
           className={styles.closeBtn}
           onClick={() => router.back()}
+          aria-label="Закрити кошик"
         >
           <svg
             className={styles.icon}
@@ -93,7 +80,7 @@ export default function BasketModal() {
 
               <button
                 className={styles.primaryBtn}
-                onClick={handleCheckout}
+                onClick={() => router.push('/orders')}
               >
                 Оформити замовлення
               </button>

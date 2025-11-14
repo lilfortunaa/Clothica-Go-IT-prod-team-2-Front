@@ -4,7 +4,7 @@
   inset: 0;
   background-color: rgba(0, 0, 0, 0.45);
   display: flex;
-  justify-content: center;
+  justify-content: end;
   align-items: center;
   z-index: 100;
   animation: fadeIn 0.25s ease-in-out;
@@ -22,16 +22,15 @@
 
 .modal {
   display: flex;
-  align-items: flex-end;
+  align-items: flex-start;
   justify-content: flex-start;
   flex-direction: column;
   position: relative;
   gap: 24px;
   padding: 40px 64px 16px 32px;
-  height: 1155px;
+  height: 100vh;
   background: #f9fcf6;
   overflow-y: auto;
-  max-height: 100vh;
   animation: slideIn 0.25s ease-in-out;
   background: #fff;
   max-width: 600px;

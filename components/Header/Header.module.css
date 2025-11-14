@@ -1,0 +1,292 @@
+.header {
+  font-family: 'Inter', sans-serif;
+  position: relative;
+}
+
+.container {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  width: 100%;
+  max-width: 375px;
+  background-color: #d6eac0;
+  border-bottom: 1px solid #9db484;
+  padding: 18px 20px;
+  margin: 0 auto;
+}
+
+.headermenu {
+  display: flex;
+  align-items: center;
+  gap: 86.5px;
+}
+
+.logo:hover {
+  color: #c5e1a5;
+}
+
+.toggle {
+  display: flex;
+  gap: 16px;
+}
+
+.menu {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  background-color: inherit;
+  border: 1px solid #9db484;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.iconMenu {
+  display: block;
+  fill: #000;
+}
+
+.close {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border: none;
+  border-radius: 50%;
+  cursor: pointer;
+}
+
+.iconClose {
+  display: block;
+  stroke: #000;
+}
+
+.basket {
+  position: relative;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  width: 36px;
+  height: 36px;
+  background-color: #000;
+  border-radius: 50%;
+}
+
+.iconBasket {
+  display: block;
+  fill: #fff;
+}
+
+.count {
+  position: absolute;
+  top: -1px;
+  right: -3px;
+  padding: 1px 3px;
+  width: 11px;
+  height: 12px;
+  font-weight: 400;
+  font-size: 10px;
+  color: #fff;
+  background-color: #b70000;
+  border-radius: 50%;
+}
+
+.nav {
+  display: none;
+}
+
+.navMobile {
+  position: absolute;
+  top: 72px;
+  left: 50%;
+  transform: translateX(-50%) translateY(-10px);
+  width: 100%;
+  max-width: 375px;
+  height: calc(100vh - 72px);
+  background-color: #d6eac0;
+  z-index: 999;
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    opacity 300ms ease-out,
+    transform 300ms ease-out;
+
+}
+
+.navMobile.show {
+  opacity: 1;
+  transform: translateX(-50%) translateY(0);
+  pointer-events: all;
+}
+
+.noScroll {
+  overflow: hidden;
+  touch-action: none;
+  height: 100%;
+}
+
+.listNavMobile {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+  gap: 32px;
+  align-items: center;
+  padding-top: 40px;
+  padding-bottom: 64px;
+}
+
+.link {
+  font-weight: 400;
+  font-size: 14px;
+  line-height: 1.5;
+  color: #000;
+  transition: color 0.2s;
+}
+
+.link:hover,
+.link:focus {
+  border-bottom: 1px solid #000;
+}
+
+
+
+.userName {
+  color: #000;
+  font-size: 14px;
+  padding: 8px 16px;
+  background-color: rgba(197, 225, 165, 0.2);
+  border-radius: 20px;
+}
+
+.logoutBtn {
+  padding: 8px 20px;
+  background-color: #c5e1a5;
+  color: #000;
+  border: none;
+  border-radius: 20px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.logoutBtn:hover {
+  background-color: #b5d095;
+  transform: translateY(-1px);
+}
+
+.logoutBtn:active {
+  transform: translateY(0);
+}
+
+.debug {
+  font-size: 12px;
+  color: #666;
+  padding: 4px 8px;
+  background-color: rgba(0, 0, 0, 0.05);
+  border-radius: 4px;
+}
+
+.skeleton {
+  display: flex;
+  gap: 16px;
+}
+
+.skeletonBox {
+  width: 80px;
+  height: 36px;
+  background: linear-gradient(90deg,
+      rgba(0, 0, 0, 0.06) 25%,
+      rgba(0, 0, 0, 0.12) 50%,
+      rgba(0, 0, 0, 0.06) 75%);
+  background-size: 200% 100%;
+  animation: loading 1.5s infinite;
+  border-radius: 20px;
+}
+
+@keyframes loading {
+  0% {
+    background-position: 200% 0;
+  }
+
+  100% {
+    background-position: -200% 0;
+  }
+}
+
+@media screen and (min-width: 768px) {
+  .container {
+    max-width: 768px;
+    padding: 18px 32px;
+  }
+
+  .group {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex: 1;
+    margin-right: 16px;
+  }
+
+  .menu {
+    display: none;
+  }
+
+  .close {
+    display: none;
+  }
+
+  .navMobile {
+    display: none;
+  }
+
+  .nav {
+    display: flex;
+    align-items: center;
+    gap: 86.5px;
+  }
+
+  .listNav {
+    list-style-type: none;
+    display: flex;
+    gap: 32px;
+  }
+
+  .link {
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 150%;
+    color: #000;
+  }
+
+  .listAuth {
+    list-style-type: none;
+    display: flex;
+    gap: 16px;
+    font-weight: 400;
+    font-size: 14px;
+    line-height: 1.5;
+  }
+
+  .navmobile {
+    display: none;
+  }
+}
+
+@media screen and (min-width: 1440px) {
+  .container {
+    max-width: 1440px;
+    padding: 18px 64px;
+  }
+
+  .group {
+    gap: 371px;
+  }
+
+  .nav {
+    gap: 371px;
+  }
+}

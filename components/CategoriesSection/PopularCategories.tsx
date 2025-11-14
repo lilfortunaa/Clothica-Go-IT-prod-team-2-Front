@@ -1,41 +1,38 @@
 'use client';
+import { getCategories } from '@/lib/api/clientApi';
 
 import Link from 'next/link';
 import Image from 'next/image';
 import css from './PopularCategories.module.css';
 
-import { useEffect, useState } from 'react';
-
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Navigation, Keyboard, A11y } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/navigation';
-import { getCategories } from '@/lib/api/clientApi';
-import { Category } from '@/types/user';
+import { Category } from '@/types/category';
+import { useQuery } from '@tanstack/react-query';
 
-const PopularCategories = () => {
-  const [categories, setCategories] = useState<Category[]>(
-    []
-  );
-  const [error, setError] = useState<string | null>(null);
+interface Props {
+  categories: Category[];
+}
 
-  useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const data = await getCategories();
-        setCategories(data);
-      } catch (err) {
-        setError((err as Error).message);
-      }
-    };
+async function PopularCategories() {
+  const {
+    data = [],
+    error,
+    isLoading,
+    isError,
+  } = useQuery<Category[]>({
+    queryKey: ['category'],
+    queryFn: () => getCategories(1, 10),
+  });
 
-    fetchCategories();
-  }, []);
-
-  if (error) return <p className={css.error}>{error}</p>;
-
+  const categories = Array.isArray(data) ? data : [];
   return (
-    <section className={css.categoriesSection}>
+    <section
+      className={css.categoriesSection}
+      id="PopularCategories"
+    >
       <div className={css.categories}>
         <h2 className={css.title}>Популярні категорії</h2>
         <div className={css.buttonLink}>
@@ -59,7 +56,10 @@ const PopularCategories = () => {
             keyboard={{ enabled: true }}
             breakpoints={{
               768: { slidesPerView: 2, spaceBetween: 32 },
-              1440: { slidesPerView: 3, spaceBetween: 32 },
+              1440: {
+                slidesPerView: 3,
+                spaceBetween: 32,
+              },
             }}
             className={css.categoriesSwiper}
           >
@@ -89,13 +89,12 @@ const PopularCategories = () => {
       </div>
 
       <div className={css.swiperButtons}>
-        <button className={` ${css.prevButton}`}>
-          {' '}
+        <button className={css.prevButton}>
           <svg>
             <use href="/sprite.svg#icon-arrow-back" />
           </svg>
         </button>
-        <button className={`${css.nextButton}`}>
+        <button className={css.nextButton}>
           <svg>
             <use href="/sprite.svg#icon-arrow-forward" />
           </svg>
@@ -103,6 +102,6 @@ const PopularCategories = () => {
       </div>
     </section>
   );
-};
+}
 
 export default PopularCategories;

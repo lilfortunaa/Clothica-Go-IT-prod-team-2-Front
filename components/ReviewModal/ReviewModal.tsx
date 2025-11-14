@@ -1,9 +1,5 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { createPortal } from 'react-dom';
-import css from './ReviewModal.module.css';
-
 import {
   ErrorMessage,
   Field,
@@ -11,63 +7,87 @@ import {
   Formik,
   FormikHelpers,
 } from 'formik';
+import { useParams } from 'next/navigation';
+import { useEffect, useState } from 'react';
+import { createPortal } from 'react-dom';
 import { StarRating } from 'react-flexible-star-rating';
+import { toast } from 'react-hot-toast';
 import * as Yup from 'yup';
+import css from './ReviewModal.module.css';
 
 interface ModalProps {
   onClose: () => void;
-  onSubmit: () => void;
-  reviewData: FormValues;
-  setReviewData: () => void;
+  // reviewData: FormValues;
+  // setReviewData: () => void;
 }
 
 interface FormValues {
   name: string;
   review: string;
   rating: number;
-  productId: string;
 }
 
 const initValues: FormValues = {
   name: '',
   review: '',
   rating: 0,
-  productId: '',
 };
 
 const ReviewSchema = Yup.object().shape({
   name: Yup.string().required(`Введіть Ваше ім'я`),
   review: Yup.string()
-    .required(`Введіть ваш відгук`)
-    .max(500, 'Надто довгий відгук('),
+    .required(`Введіть Ваш відгук`)
+    .max(
+      500,
+      'Відгук не повинен перевищувати 500 символів'
+    ),
+  rating: Yup.number()
+    .min(0.5, 'Вкажіть оцінку')
+    .required('Вкажіть оцінку'),
 });
 
 export default function ReviewModal({
   onClose,
-  reviewData,
-  setReviewData,
-  onSubmit,
+  // reviewData,
+  // setReviewData,
 }: ModalProps) {
   const [loading, setLoading] = useState(false);
 
-  const handleBackdrop = (
-    event: React.MouseEvent<HTMLDivElement>
-  ) => {
-    if (event.target === event.currentTarget) {
-      onClose();
-    }
-  };
+  const params = useParams();
+  const productId = params.productId as string;
+  const category = params.category as string;
 
   const handleSubmit = async (
     values: FormValues,
     actions: FormikHelpers<FormValues>
   ) => {
+    const payload = {
+      productId,
+      category,
+      author: values.name,
+      rate: values.rating,
+      description: values.review,
+      date: new Date().toISOString().split('T')[0],
+    };
+    console.log(payload);
+
     try {
       setLoading(true);
-    } catch (err) {
+      // const response;
+      toast.success('Ваш відгук відправлено!');
+      actions.resetForm();
+      onClose();
+    } catch (err: any) {
+      toast.error(err.message);
     } finally {
       setLoading(false);
-      actions.resetForm();
+    }
+  };
+
+  const handleBackdrop = (
+    event: React.MouseEvent<HTMLDivElement>
+  ) => {
+    if (event.target === event.currentTarget) {
       onClose();
     }
   };
@@ -93,8 +113,6 @@ export default function ReviewModal({
       );
     };
   }, [onClose]);
-
-  const handleRatingChange = (rating: number) => {};
 
   return (
     <>
@@ -125,68 +143,87 @@ export default function ReviewModal({
               onSubmit={handleSubmit}
               validationSchema={ReviewSchema}
             >
-              <Form className={css.form}>
-                <div className={css.inputContainer}>
-                  <label
-                    className={css.label}
-                    htmlFor="name"
-                  >
-                    Ваше імʼя
-                  </label>
-                  <Field
-                    className={css.input}
-                    id="name"
-                    type="text"
-                    name="name"
-                    placeholder="Ваше ім'я"
-                  />
-                  <div className={css.errorMessage}>
-                    <ErrorMessage
+              {formik => (
+                <Form className={css.form}>
+                  <div className={css.inputContainer}>
+                    <label
+                      className={css.label}
+                      htmlFor="name"
+                    >
+                      Ваше імʼя
+                    </label>
+                    <Field
+                      className={css.input}
+                      id="name"
+                      type="text"
                       name="name"
-                      component="span"
+                      placeholder="Ваше ім'я"
                     />
+                    <div className={css.errorMessage}>
+                      <ErrorMessage
+                        name="name"
+                        component="span"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className={css.inputContainer}>
-                  <label
-                    className={css.label}
-                    htmlFor="review"
-                  >
-                    Відгук
-                  </label>
-                  <Field
-                    as="textarea"
-                    className={css.textarea}
-                    id="review"
-                    type="text"
-                    name="review"
-                    placeholder="Ваш відгук"
-                  ></Field>
-                  <div className={css.errorMessage}>
-                    <ErrorMessage
+
+                  <div className={css.inputContainer}>
+                    <label
+                      className={css.label}
+                      htmlFor="review"
+                    >
+                      Відгук
+                    </label>
+                    <Field
+                      as="textarea"
+                      className={css.textarea}
+                      id="review"
+                      type="text"
                       name="review"
-                      component="span"
-                    />
+                      placeholder="Ваш відгук"
+                    ></Field>
+                    <div className={css.errorMessage}>
+                      <ErrorMessage
+                        name="review"
+                        component="span"
+                      />
+                    </div>
                   </div>
-                </div>
-                <div className={css.ratingContainer}>
-                  <StarRating
-                    isHalfRatingEnabled
-                    color={'#000000'}
-                    dimension={6}
-                    onRatingChange={handleRatingChange}
-                  ></StarRating>
-                </div>
-                <button
-                  className={css.button}
-                  type="submit"
-                  disabled={loading}
-                >
-                  {loading
-                    ? 'Надсилаємо відгук...'
-                    : 'Надіслати'}
-                </button>
-              </Form>
+
+                  <div className={css.ratingContainer}>
+                    <Field
+                      name="rating"
+                      as={StarRating}
+                      isHalfRatingEnabled
+                      color={'#000000'}
+                      dimension={6}
+                      onRatingChange={(value: number) => {
+                        formik.setFieldValue(
+                          'rating',
+                          value
+                        );
+                      }}
+                      initialRating={0}
+                    ></Field>
+                    <div className={css.errorMessage}>
+                      <ErrorMessage
+                        name="rating"
+                        component="span"
+                      />
+                    </div>
+                  </div>
+
+                  <button
+                    className={css.button}
+                    type="submit"
+                    disabled={loading}
+                  >
+                    {loading
+                      ? 'Надсилаємо відгук...'
+                      : 'Надіслати'}
+                  </button>
+                </Form>
+              )}
             </Formik>
           </div>
         </div>,

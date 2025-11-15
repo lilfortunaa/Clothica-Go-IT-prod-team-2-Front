@@ -6,6 +6,7 @@ import styles from './BasketModal.module.css';
 import { useBasketStore } from '@/lib/store/basketStore';
 import GoodsOrderList from './GoodsOrderList';
 import MessageNoInfo from './MessageNoInfo';
+import { __next_app__ } from 'next/dist/build/templates/app-page';
 
 export default function BasketModal() {
   const router = useRouter();
@@ -39,6 +40,15 @@ export default function BasketModal() {
     if (e.target === e.currentTarget) router.back();
   };
 
+  const handleClose = () => {
+    router.back();
+  };
+  const handleNavigate = (path: string) => {
+    document.body.style.overflow = 'unset';
+    router.push(path);
+    window.location.href = path;
+  };
+
   return (
     <div
       className={styles.backdrop}
@@ -64,14 +74,14 @@ export default function BasketModal() {
             <div className={styles.buttons}>
               <button
                 className={styles.secondaryBtn}
-                onClick={() => router.push('/goods')}
+                onClick={() => handleNavigate('/goods')}
               >
                 Продовжити покупки
               </button>
 
               <button
                 className={styles.primaryBtn}
-                onClick={() => router.push('/orders')}
+                onClick={() => handleNavigate('/orders')}
               >
                 Оформити замовлення
               </button>
@@ -82,7 +92,7 @@ export default function BasketModal() {
             <MessageNoInfo
               text="Ваш кошик порожній, мерщій до покупок!"
               buttonText="До покупок"
-              onClick={() => router.push('/goods')}
+              onClick={() => handleNavigate('/goods')}
             />
           </div>
         )}

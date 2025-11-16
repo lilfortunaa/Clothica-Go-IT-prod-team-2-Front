@@ -120,11 +120,7 @@ export default function Header() {
             Додати
           </button>
           <button
-            onClick={() =>
-              router.push('/basket', {
-                scroll: false,
-              })
-            }
+            onClick={() => router.push('/basket?from=ui')}
             className={css.basket}
             aria-label="Кошик"
           >

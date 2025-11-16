@@ -37,7 +37,13 @@ export default function BasketModal() {
   const handleBackdropClick = (
     e: React.MouseEvent<HTMLDivElement>
   ) => {
-    if (e.target === e.currentTarget) router.back();
+    if (e.target === e.currentTarget) handleClose();
+  };
+
+  const handleNavigate = (path: string) => {
+    document.body.style.overflow = 'unset';
+    router.push(path);
+    window.location.href = path;
   };
 
   const handleClose = () => {
@@ -52,7 +58,7 @@ export default function BasketModal() {
       <div className={styles.modal}>
         <button
           className={styles.closeBtn}
-          onClick={() => router.back()}
+          onClick={handleClose}
           aria-label="Закрити кошик"
         >
           <svg className={styles.icon}>
@@ -69,14 +75,14 @@ export default function BasketModal() {
             <div className={styles.buttons}>
               <button
                 className={styles.secondaryBtn}
-                onClick={handleClose}
+                onClick={() => handleNavigate('/goods')}
               >
                 Продовжити покупки
               </button>
 
               <button
                 className={styles.primaryBtn}
-                onClick={handleClose}
+                onClick={() => handleNavigate('/orders')}
               >
                 Оформити замовлення
               </button>
@@ -87,7 +93,7 @@ export default function BasketModal() {
             <MessageNoInfo
               text="Ваш кошик порожній, мерщій до покупок!"
               buttonText="До покупок"
-              onClick={() => router.push('/goods')}
+              onClick={() => handleNavigate('/goods')}
             />
           </div>
         )}
@@ -95,101 +101,3 @@ export default function BasketModal() {
     </div>
   );
 }
-// __next_app__'use client';
-
-// import { useEffect, useCallback } from 'react';
-// import { useRouter } from 'next/navigation';
-// import styles from './BasketModal.module.css';
-// import { useBasketStore } from '@/lib/store/basketStore';
-// import GoodsOrderList from './GoodsOrderList';
-// import MessageNoInfo from './MessageNoInfo';
-
-// export default function BasketModal() {
-//   const router = useRouter();
-//   const { items, getTotalPrice, clearBasket } =
-//     useBasketStore();
-//   const handleKeyDown = useCallback(
-//     (e: KeyboardEvent) => {
-//       if (e.key === 'Escape') {
-//         {
-//           handleClose;
-//         }
-//       }
-//     },
-//     [router]
-//   );
-
-//   useEffect(() => {
-//     document.addEventListener('keydown', handleKeyDown);
-//     document.body.style.overflow = 'hidden';
-
-//     return () => {
-//       document.removeEventListener(
-//         'keydown',
-//         handleKeyDown
-//       );
-//       document.body.style.overflow = 'unset';
-//     };
-//   }, [handleKeyDown]);
-
-//   const handleBackdropClick = (
-//     e: React.MouseEvent<HTMLDivElement>
-//   ) => {
-//     if (e.target === e.currentTarget) router.push('/goods');
-//   };
-
-//   const handleClose = () => {
-//     router.back();
-//   };
-
-//   return (
-//     <div
-//       className={styles.backdrop}
-//       onClick={handleBackdropClick}
-//     >
-//       <div className={styles.modal}>
-//         <button
-//           className={styles.closeBtn}
-//           onClick={handleClose}
-//           aria-label="Закрити кошик"
-//         >
-//           <svg className={styles.icon}>
-//             <use href="/sprite.svg#icon-close"></use>
-//           </svg>
-//         </button>
-
-//         <h2 className={styles.title}>Ваш кошик</h2>
-
-//         {items.length > 0 ? (
-//           <>
-//             <GoodsOrderList items={items} />
-
-//             <div className={styles.buttons}>
-//               <button
-//                 className={styles.secondaryBtn}
-//                 onClick={handleClose}
-//               >
-//                 Продовжити покупки
-//               </button>
-
-//               <button
-//                 className={styles.primaryBtn}
-//                 onClick={handleClose}
-//               >
-//                 Оформити замовлення
-//               </button>
-//             </div>
-//           </>
-//         ) : (
-//           <div className={styles.empty}>
-//             <MessageNoInfo
-//               text="Ваш кошик порожній, мерщій до покупок!"
-//               buttonText="До покупок"
-//               onClick={handleClose}
-//             />
-//           </div>
-//         )}
-//       </div>
-//     </div>
-//   );
-// }

@@ -16,6 +16,7 @@
   category?: string;
   gender?: string;
   size?: string[];
+  color?: string;
   minPrice?: number;
   maxPrice?: number;
 }

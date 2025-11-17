@@ -16,7 +16,7 @@ interface Props {
   categories: Category[];
 }
 
-async function PopularCategories() {
+export function PopularCategories() {
   const {
     data = [],
     error,

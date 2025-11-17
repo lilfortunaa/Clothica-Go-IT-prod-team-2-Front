@@ -1,7 +1,4 @@
-import {
-  fetchReviewsResponse,
-  Review,
-} from '@/types/review';
+import { fetchReviewsResponse, Review } from '@/types/review';
 import { nextServer } from './api';
 import type { User, RegisterRequest } from '@/types/user';
 import { Category } from '@/types/category';
@@ -13,7 +10,6 @@ export const login = async (
   password: string
 ): Promise<User> => {
   const cleanPhone = phone.replaceAll(/[\s()\-+]/g, '');
-
   const res = await nextServer.post('/auth/login', {
     phone: cleanPhone,
     password,
@@ -26,15 +22,10 @@ export const register = async (
 ): Promise<User> => {
   const cleanPayload = {
     firstName: payload.firstName.trim(),
-    phone: payload.phone
-      .trim()
-      .replaceAll(/[\s()\-+]/g, ''),
+    phone: payload.phone.trim().replaceAll(/[\s()\-+]/g, ''),
     password: payload.password,
   };
-  const res = await nextServer.post(
-    '/auth/register',
-    cleanPayload
-  );
+  const res = await nextServer.post('/auth/register', cleanPayload);
   return res.data;
 };
 
@@ -50,23 +41,16 @@ export const fetchUserProfile = async (): Promise<User> => {
 export const updateUserProfile = async (
   payload: Partial<User>
 ): Promise<User> => {
-  const { data } = await nextServer.patch<User>(
-    '/user/me',
-    payload
-  );
+  const { data } = await nextServer.patch<User>('/user/me', payload);
   return data;
 };
 
-export const refreshAccessToken = async (): Promise<{
-  accessToken: string;
-}> => {
+export const refreshAccessToken = async (): Promise<{ accessToken: string }> => {
   const res = await nextServer.post('/auth/refresh');
   return res.data;
 };
 
-export const checkSession = async (): Promise<{
-  accessToken?: string;
-}> => {
+export const checkSession = async (): Promise<{ accessToken?: string }> => {
   const res = await nextServer.get('/auth/session');
   return res.data;
 };
@@ -75,9 +59,7 @@ export const getCategories = async (
   page: number = 1,
   perPage: number = 10
 ): Promise<Category[]> => {
-  const { data } = await nextServer.get<{
-    data: Category[];
-  }>('/categories', {
+  const { data } = await nextServer.get<{ data: Category[] }>('/categories', {
     params: { page, perPage },
   });
   return data.data || [];
@@ -85,23 +67,15 @@ export const getCategories = async (
 
 export const sendSubscription = async (email: string) => {
   try {
-    const res = await nextServer.post('/subscriptions', {
-      email,
-    });
+    const res = await nextServer.post('/subscriptions', { email });
     return res.data.message;
   } catch (err: any) {
-    throw new Error(
-      err.response?.data?.error ||
-        'Не вдалося створити підписку'
-    );
+    throw new Error(err.response?.data?.error || 'Не вдалося створити підписку');
   }
 };
 
 export const fetchReviews = async (): Promise<Review[]> => {
-  const response =
-    await nextServer.get<fetchReviewsResponse>(
-      '/feedbacks'
-    );
+  const response = await nextServer.get<fetchReviewsResponse>('/feedbacks');
   console.log(response.data.feedbacks);
   return response.data.feedbacks || [];
 };
@@ -109,29 +83,28 @@ export const fetchReviews = async (): Promise<Review[]> => {
 export const getGoodsByFeedback = async (
   params: GetGoodsParams = {}
 ): Promise<Good[]> => {
-  const { data } = await nextServer.get<{ data: Good[] }>(
-    '/goods',
-    { params }
-  );
-
-  const filteredGoods = data.data.filter(
-    good => (good.feedbackCount ?? 0) > 0
-  );
-
+  const { data } = await nextServer.get<{ data: Good[] }>('/goods', { params });
+  const filteredGoods = data.data.filter((good) => (good.feedbackCount ?? 0) > 0);
   return filteredGoods;
 };
 
 export const getGoods = async (
-  params: GetGoodsParams = {}
-): Promise<Good[]> => {
-  const { data } = await nextServer.get<{ data: Good[] }>(
-    '/goods',
-    {
-      params,
-    }
-  );
+  params: GetGoodsParams = {},
+  page: number = 1,
+  perPage: number = 15
+): Promise<{ data: Good[]; totalGoods: number }> => {
+  const response = await nextServer.get<{
+    page: number;
+    perPage: number;
+    totalGoods: number;
+    totalPages: number;
+    data: Good[];
+  }>('/goods', { params: { ...params, page, perPage } });
 
-  return data.data;
+  return {
+    data: response.data.data,
+    totalGoods: response.data.totalGoods,
+  };
 };
 
 export const getGoodById = async (id: string) => {

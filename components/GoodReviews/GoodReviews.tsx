@@ -13,11 +13,9 @@ import {
   fetchReviewsById,
 } from '@/lib/api/clientApi';
 import Loader from '../Loader/Loader';
-
 interface Props {
   id: string;
 }
-
 const StarRating = ({ rating }: { rating: number }) => {
   const stars = [];
 
@@ -25,19 +23,19 @@ const StarRating = ({ rating }: { rating: number }) => {
     if (i <= rating) {
       stars.push(
         <svg key={i} className={css.star}>
-          <use xlinkHref="sprite.svg#icon-icon-star-fill"></use>
+          <use href="/sprite.svg#icon-icon-star-fill"></use>
         </svg>
       );
     } else if (i - 0.5 <= rating) {
       stars.push(
         <svg key={i} className={css.star}>
-          <use href="sprite.svg#icon-icon-star-half-fill"></use>
+          <use href="/sprite.svg#icon-icon-star-half-fill"></use>
         </svg>
       );
     } else {
       stars.push(
         <svg key={i} className={css.star}>
-          <use href="sprite.svg#icon-star-no-fill"></use>
+          <use href="/sprite.svg#icon-star-no-fill"></use>
         </svg>
       );
     }
@@ -53,7 +51,7 @@ export default function GoodReviews({ id }: Props) {
     isLoading,
     isError,
   } = useQuery<Review[]>({
-    queryKey: ['reviews', id],
+    queryKey: ['reviews'],
     queryFn: () => fetchReviewsById(id),
   });
 
@@ -92,12 +90,7 @@ export default function GoodReviews({ id }: Props) {
   return (
     <>
       <div className={css.container}>
-        <div className={css.containerSend}>
-          <h2 className={css.title}>Відгуки клієнтів</h2>
-          <button className={css.btnSend} type="button">
-            Залишити відгук
-          </button>
-        </div>
+        <h2 className={css.title}>Х</h2>
         <div className={css.list}>
           <Swiper
             modules={[Keyboard, A11y]}
@@ -120,49 +113,29 @@ export default function GoodReviews({ id }: Props) {
           >
             {reviews.map(review => (
               <SwiperSlide key={review._id}>
-                <ul>
-                  <li className={css.listItem}>
-                    <div className={css.descContainer}>
-                      <StarRating rating={review.rate} />
-                      <p className={css.text}>
-                        {review.description}
-                      </p>
-                    </div>
-                    <div className={css.authorContainer}>
-                      <h3 className={css.author}>
-                        {review.author}
-                      </h3>
-                    </div>
-                  </li>
-                </ul>
+                <li className={css.listItem}>
+                  <div className={css.descContainer}>
+                    <StarRating rating={review.rate} />
+                    <p className={css.text}>
+                      {review.description}
+                    </p>
+                  </div>
+                  <div className={css.authorContainer}>
+                    <h3 className={css.author}>
+                      {review.author}
+                    </h3>
+                    <Link
+                      href={`/categories/${review.category}`}
+                      className={css.link}
+                    >
+                      {review.category}
+                    </Link>
+                  </div>
+                </li>
               </SwiperSlide>
             ))}
           </Swiper>
         </div>
-
-        {/* <>
-          <div className={css.containerSend}>
-            <h2 className={css.title}>Відгуки клієнтів</h2>
-            <button
-              className={`${css.btnSend} ${css.btnFeedback}`}
-              type="button"
-            >
-              Залишити відгук
-            </button>
-          </div>
-          <div className={css.containerBtnSend}>
-            <p className={css.notFeedback}>
-              У цього товару ще немає відгуків
-            </p>
-            <button
-              className={`${css.btnSend} ${css.btnFeedback}`}
-              type="button"
-            >
-              Залишити відгук
-            </button>
-          </div>
-        </> */}
-
         <div className={css.btnContainer}>
           <button
             className={`${css.navBtn} ${isBeginning ? css.disabled : ''}`}
@@ -170,7 +143,7 @@ export default function GoodReviews({ id }: Props) {
             disabled={isBeginning}
           >
             <svg>
-              <use xlinkHref="sprite.svg#icon-arrow-back"></use>
+              <use href="/sprite.svg#icon-arrow-back"></use>
             </svg>
           </button>
           <button
@@ -179,7 +152,7 @@ export default function GoodReviews({ id }: Props) {
             disabled={isEnd}
           >
             <svg>
-              <use xlinkHref="sprite.svg#icon-arrow-forward"></use>
+              <use href="/sprite.svg#icon-arrow-forward"></use>
             </svg>
           </button>
         </div>

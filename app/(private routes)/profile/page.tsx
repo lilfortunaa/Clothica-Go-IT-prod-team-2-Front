@@ -9,85 +9,98 @@ import toast from 'react-hot-toast';
 import css from './ProfilePage.module.css';
 import Loading from "@/app/loading";
 import { User } from '@/types/user'
-import { Order } from '@/types/order';
+// import { Order } from '@/types/order';
+
+import { useUserStore } from "@/lib/store/userStore";
 
 const ProfilePage = () => {
-  const { user, setUser, clearAuth } = useAuthStore();
+
+  const {
+    user,
+    orders,
+    loading,
+    setUser,
+    setOrders,
+    setLoading,
+    error,
+    setError,
+    clearUser
+  } = useUserStore();
+
   const [firstName, setFirstName] = useState<string>('');
   const [lastName, setLastName] = useState<string>('');
   const [phone, setPhone] = useState<string>("");
   const [city, setCity] = useState<string>();
   const [post, setPost] = useState<number | "">("");
-  const [loading, setLoading] = useState(true);
-  const [error, setError] = useState<string | null>(null);
-  const [orders, setOrders] = useState<Order[]>([]);
 
   const router = useRouter();
-
+  
   useEffect(() => {
-    async function fetchProfile() {
-      if (user) {
-        setFirstName(user.firstName || "");
-        setLastName(user.lastName || "");
-        setPhone(user.phone !== undefined ? String(user.phone) : "");
-        setCity(user.city || "");
-        setPost(user.postOffice !== undefined ? Number(user.postOffice) : "");
-        setLoading(false);
-        return;
-      }
+  async function loadUser() {
+    setLoading(true);
+    try {
+      const profile = await fetchUserProfile();
+      setUser(profile);
+      const userOrders = await fetchMyOrders();
+      setOrders(userOrders);
 
-      try {
-        setLoading(true);
-        const currentUser = await fetchUserProfile();
-        setFirstName(currentUser?.firstName || "");
-        setLastName(currentUser?.lastName || "");
-        setPhone(currentUser.phone !== undefined ? String(currentUser.phone) : "");
-        setCity(currentUser?.city || "");
-        setPost(currentUser.postOffice !== undefined ? Number(currentUser.postOffice) : "")
-        setUser(currentUser);
-
-        const userOrders = await fetchMyOrders();
-        setOrders(userOrders);
-
-      } catch (err) {
-        console.error(err);
-        setError("Unable to load profile");
-      } finally {
-        setLoading(false);
-      }
-    } fetchProfile();
-  }, [user, setUser]);
-
-  const handleSave = async (e: React.FormEvent) => {
-  e.preventDefault();
-
-  const payload: Partial<User> = {
-    firstName,
-    lastName,
-    phone: Number(phone),
-    city,
-    postOffice: post !== "" ? String(post) : undefined,
-  };
-
-  try {
-    const updatedUser = await updateUserProfile(payload);
-    setUser(updatedUser);
-    router.push("/profile");
-  } catch (err) {
-    console.error(err);
-    setError("Failed to update profile");
+      setFirstName(profile.firstName || "");
+      setLastName(profile.lastName || "");
+      setPhone(profile.phone ? String(profile.phone) : "");
+      setCity(profile.city || "");
+      setPost(profile.postOffice ? Number(profile.postOffice) : "");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to load profile");
+    } finally {
+      setLoading(false);
+    }
   }
-};
 
+  if (!user) {
+    loadUser();
+  } else {
+    setFirstName(user.firstName || "");
+    setLastName(user.lastName || "");
+    setPhone(user.phone ? String(user.phone) : "");
+    setCity(user.city || "");
+    setPost(user.postOffice !== undefined ? Number(user.postOffice) : "");
+    setLoading(false);
+  }
+  }, [user, setUser, setOrders, setLoading, setError]);
+  
+  const handleSave = async (e: React.FormEvent) => {
+    e.preventDefault();
+    const payload: Partial<User> = {
+      firstName,
+      lastName,
+      phone: Number(phone),
+      city,
+      postOffice: post !== "" ? String(post) : undefined,
+    };
+    
+    try {
+      const updatedUser = await updateUserProfile(payload);
+      setUser(updatedUser);
+      toast.success("Профіль оновлено");
+      router.push("/profile");
+    } catch (err) {
+      console.error(err);
+      setError("Failed to update profile");
+    }
+    (e.target as HTMLFormElement).blur();
+  };
+  
   const handleLogout = async () => {
     try {
       await apiLogout();
-    } catch {}
-    clearAuth();
+    } catch { }
+    useAuthStore.getState().clearAuth();
+    clearUser();
     toast.success('Ви вийшли з системи');
     router.push('/');
   };
-
+  
   if (loading) return <Loading />;
 
   if (!user) {
@@ -115,7 +128,7 @@ const ProfilePage = () => {
               id="firstName"
               type="text"
               className={css.inputForm}
-                  value={firstName}
+                  value={firstName || ''}
                         placeholder='Ваше імʼя'
                         onChange={(e) => setFirstName(e.target.value)}
                 required
@@ -127,7 +140,7 @@ const ProfilePage = () => {
               id="lastName"
               type="text"
               className={css.inputForm}
-                  value={lastName}
+                  value={lastName || ''}
                   placeholder='Ваше прізвище'
                   onChange={(e) => setLastName(e.target.value)}
                 required
@@ -141,7 +154,7 @@ const ProfilePage = () => {
                       id="phone"
                       type="tel"
                       className={`${css.inputForm} ${css.inputPhone}`}
-                      value={phone}
+                      value={phone || Number("")}
                       onChange={(e) => setPhone(e.target.value)}
                       placeholder='+38 (0__) ___-__-__'
                       required
@@ -155,7 +168,7 @@ const ProfilePage = () => {
               id="city"
               type="text"
               className={css.inputForm}
-                        value={city}
+                        value={city || ""}
                         onChange={(e) => setCity(e.target.value)}
                   placeholder='Ваше місто'
                 required
@@ -167,7 +180,7 @@ const ProfilePage = () => {
               id="post"
               type="string"
                         className={css.inputForm}
-                        value={post}
+                        value={post || Number('')}
                       onChange={(e) => setPost(e.target.value ? Number(e.target.value) : "")}
                   placeholder='1'
                 required
@@ -239,3 +252,4 @@ const ProfilePage = () => {
 };
 
 export default ProfilePage;
+

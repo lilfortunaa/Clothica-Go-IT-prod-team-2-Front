@@ -157,6 +157,18 @@
   background: #c5e1a5;
 }
 
+.linkMessageNoInfo:hover {
+  background: #9db484;
+  color: #000;
+  border: 1px solid #4e5a42;
+}
+
+.linkMessageNoInfo:focus {
+  background: rgba(0, 0, 0, 0.15);
+  color: #000;
+  border: 1px solid #4e5a42;
+}
+
 .logoutButton {
   font-family: 'Inter', sans-serif;
   border: 1px solid rgba(255, 255, 255, 0);

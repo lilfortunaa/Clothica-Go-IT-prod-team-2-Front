@@ -141,8 +141,18 @@ export const getGoodById = async (id: string) => {
 };
 
 export const fetchMyOrders = async (): Promise<Order[]> => {
-  const { data } = await nextServer.get<{ data: Order[] }>(
-    '/orders/my'
-  );
-  return data.data || [];
+  try {
+    const { data } = await nextServer.get<{
+      message: string;
+      page: number;
+      perPage: number;
+      totalOrders: number;
+      totalPages: number;
+      data: Order[];
+    }>('/orders/my');
+    return data.data || [];
+  } catch (error) {
+    console.error('Error fetching orders:', error);
+    return [];
+  }
 };

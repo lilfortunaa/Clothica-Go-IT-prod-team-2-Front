@@ -1,6 +1,7 @@
 import {
   fetchReviewsResponse,
   Review,
+  ReviewRequestBody,
 } from '@/types/review';
 import { nextServer } from './api';
 import type { User, RegisterRequest } from '@/types/user';
@@ -104,6 +105,15 @@ export const fetchReviews = async (): Promise<Review[]> => {
     );
   console.log(response.data.feedbacks);
   return response.data.feedbacks || [];
+};
+
+export const createReview = async (
+  review: ReviewRequestBody
+): Promise<Review> => {
+  const res = await nextServer.post<Review>('/feedbacks', {
+    review,
+  });
+  return res.data;
 };
 
 export const getGoodsByFeedback = async (

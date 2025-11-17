@@ -7,18 +7,18 @@ import {
   Formik,
   FormikHelpers,
 } from 'formik';
-import { useParams } from 'next/navigation';
 import { useEffect, useState } from 'react';
 import { createPortal } from 'react-dom';
 import { StarRating } from 'react-flexible-star-rating';
 import { toast } from 'react-hot-toast';
 import * as Yup from 'yup';
 import css from './ReviewModal.module.css';
+import { ReviewRequestBody } from '@/types/review';
 
 interface ModalProps {
   onClose: () => void;
-  // reviewData: FormValues;
-  // setReviewData: () => void;
+  goodId: string;
+  category: string;
 }
 
 interface FormValues {
@@ -48,21 +48,17 @@ const ReviewSchema = Yup.object().shape({
 
 export default function ReviewModal({
   onClose,
-  // reviewData,
-  // setReviewData,
+  goodId,
+  category,
 }: ModalProps) {
   const [loading, setLoading] = useState(false);
-
-  const params = useParams();
-  const productId = params.productId as string;
-  const category = params.category as string;
 
   const handleSubmit = async (
     values: FormValues,
     actions: FormikHelpers<FormValues>
   ) => {
-    const payload = {
-      productId,
+    const payload: ReviewRequestBody = {
+      goodId,
       category,
       author: values.name,
       rate: values.rating,

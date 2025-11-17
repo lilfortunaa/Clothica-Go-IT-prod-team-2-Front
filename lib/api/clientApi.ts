@@ -100,21 +100,15 @@ export const sendSubscription = async (email: string) => {
   }
 };
 
-export const fetchReviews = async (): Promise<Review[]> => {
-  const response =
-    await nextServer.get<fetchReviewsResponse>(
-      '/feedbacks'
-    );
-  console.log(response.data.feedbacks);
-  return response.data.feedbacks || [];
-};
-
-export const fetchReviewsById = async (
-  id: string
+export const fetchReviews = async (
+  id?: string
 ): Promise<Review[]> => {
   const response =
     await nextServer.get<fetchReviewsResponse>(
-      `/feedbacks/${id}`
+      '/feedbacks',
+      {
+        params: id ? { goodId: id } : {},
+      }
     );
   console.log(response.data.feedbacks);
   return response.data.feedbacks || [];

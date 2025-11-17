@@ -12,7 +12,7 @@ export default function HomePage() {
       <StyleFeatures />
       <PopularCategories />
       <PopularGoods />
-      <ReviewsList />
+      <ReviewsList title="Останні відгуки" />
     </main>
   );
 }

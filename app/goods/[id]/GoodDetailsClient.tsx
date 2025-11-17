@@ -6,13 +6,12 @@ import css from './GoodDetails.module.css';
 import Image from 'next/image';
 import Link from 'next/link';
 
-import { Good } from '@/types/goods';
 import { useQuery } from '@tanstack/react-query';
 import { useEffect, useState } from 'react';
 import { useBasketStore } from '@/lib/store/basketStore';
 import CustomSelect from '@/components/CustomSelect/CustomSelect';
 import Loader from '@/components/Loader/Loader';
-import GoodReviews from '@/components/GoodReviews/GoodReviews';
+import ReviewsList from '@/components/ReviewsList/ReviewsList';
 
 const StarRating = ({ rating }: { rating: number }) => {
   const stars = [];
@@ -44,6 +43,21 @@ const StarRating = ({ rating }: { rating: number }) => {
 
 export default function GoodsDetailsClient() {
   const { id } = useParams<{ id: string }>();
+  const router = useRouter();
+  const addToBasket = useBasketStore(
+    state => state.addToBasket
+  );
+  const clearBasket = useBasketStore(
+    state => state.clearBasket
+  );
+
+  const [selectedSize, setSelectedSize] = useState('');
+  const [quantity, setQuantity] = useState(1);
+  const [isClient, setIsClient] = useState(false);
+
+  useEffect(() => {
+    setIsClient(true);
+  }, []);
 
   const {
     data: good,
@@ -55,26 +69,19 @@ export default function GoodsDetailsClient() {
     refetchOnMount: false,
   });
 
-  const router = useRouter();
-  const addToBasket = useBasketStore(
-    state => state.addToBasket
-  );
-  const clearBasket = useBasketStore(
-    state => state.clearBasket
-  );
-
-  const [selectedSize, setSelectedSize] = useState('');
-  const [quantity, setQuantity] = useState(1);
-
-  if (isLoading) return <Loader />;
-  if (isError || !good)
-    return <div>Error loading note.</div>;
-
   useEffect(() => {
-    if (good?.size && good.size.length > 0) {
+    if (
+      good?.size &&
+      good.size.length > 0 &&
+      !selectedSize
+    ) {
       setSelectedSize(good.size[0]);
     }
-  }, [good]);
+  }, [good, selectedSize]);
+
+  if (!isClient || isLoading) return <Loader />;
+  if (isError || !good)
+    return <div>Error loading product.</div>;
 
   const basketItem = {
     _id: good._id,
@@ -92,7 +99,6 @@ export default function GoodsDetailsClient() {
       alert('Оберіть доступний розмір!');
       return;
     }
-
     addToBasket(basketItem);
   };
 
@@ -110,9 +116,10 @@ export default function GoodsDetailsClient() {
     router.push('/orders');
   };
 
-  if (!good || !good.size || good.size.length === 0) {
+  if (!good.size || good.size.length === 0) {
     return <p>Розміри товару недоступні.</p>;
   }
+
   return (
     <>
       <section className={css.categoriesSection}>
@@ -123,6 +130,7 @@ export default function GoodsDetailsClient() {
             width={416}
             height={277}
             className={css.IMG}
+            priority
           />
         </div>
         <div className={css.listSection}>
@@ -154,7 +162,6 @@ export default function GoodsDetailsClient() {
               <p className={css.textTitel}>
                 {good.price.value} {good.price.currency}
               </p>
-
               <div className={css.rating}>
                 <StarRating rating={good.avgRating ?? 0} />
                 <span className={css.ratingText}>
@@ -168,6 +175,7 @@ export default function GoodsDetailsClient() {
           <p className={css.text}>
             {good.prevDescription ?? ''}
           </p>
+
           <div className={css.form}>
             <label
               className={css.text}
@@ -196,6 +204,7 @@ export default function GoodsDetailsClient() {
               <div className={css.formCount}>
                 <input
                   id="quantity"
+                  type="number"
                   value={quantity}
                   min={1}
                   onChange={e =>
@@ -205,18 +214,22 @@ export default function GoodsDetailsClient() {
                 />
               </div>
             </div>
+
             <button
               type="button"
               className={css.buttonBuy}
               onClick={handleBuyNow}
+              disabled={!selectedSize}
             >
               Купити зараз
             </button>
+
             <p className={css.formText}>
               Безкоштовна доставка для замовлень від 1000
               грн
             </p>
           </div>
+
           <div className={css.descriptionBlock}>
             <h3 className={css.descriptionTitle}>Опис</h3>
             <p className={css.descriptionText}>
@@ -239,19 +252,23 @@ export default function GoodsDetailsClient() {
                   </li>
                 )
               )}
-
               <li className={css.characteristicItem}>
                 <strong className={css.characteristicText}>
                   Доступні розміри:
                 </strong>
-                {good['size'][0]} -{' '}
-                {good['size'][good['size'].length - 1]}
+                {good.size[0]} -{' '}
+                {good.size[good.size.length - 1]}
               </li>
             </ul>
           </div>
         </div>
       </section>
-      <GoodReviews id={id} />
+
+      <ReviewsList
+        id={id}
+        title="Відгуки клієнтів"
+        showAddButton={true}
+      />
     </>
   );
 }

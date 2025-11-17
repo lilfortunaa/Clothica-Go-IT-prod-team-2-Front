@@ -1,44 +1,41 @@
-"use client";
+'use client';
 
-import { useEffect, useState } from "react";
-import { useAuthStore } from "@/lib/store/authStore";
-import { fetchUserProfile } from "@/lib/api/clientApi";
-import css from "./AuthProvider.module.css";
+import { useEffect } from 'react';
+import { useRouter, usePathname } from 'next/navigation';
+import { useAuthStore } from '@/lib/store/authStore';
+import { fetchUserProfile } from '@/lib/api/clientApi';
 
-export default function AuthProvider({ 
-  children 
-}: { 
-  children: React.ReactNode 
+export default function AuthProvider({
+  children,
+}: {
+  children: React.ReactNode;
 }) {
-  const { setUser, clearAuth } = useAuthStore();
-  const [ready, setReady] = useState(false);
+  const router = useRouter();
+  const pathname = usePathname();
+
+  const { user, setUser, clearAuth } = useAuthStore();
 
   useEffect(() => {
-    let mounted = true;
+    if (pathname.startsWith('/auth')) return;
 
-    const initUser = async () => {
-      try {
-        const user = await fetchUserProfile();
-        if (mounted) setUser(user);
-      } catch {
-        if (mounted) clearAuth();
-      } finally {
-        if (mounted) setReady(true);
-      }
-    };
+    if (user) return;
 
-    initUser();
-    return () => { mounted = false; };
-  }, [setUser, clearAuth]);
+    fetchUserProfile()
+      .then(setUser)
+      .catch(() => {
+        clearAuth();
 
-  if (!ready) {
-    return (
-      <div className={css.loading}>
-        <div className={css.spinner}></div>
-        <p>Перевірка сесії...</p>
-      </div>
-    );
-  }
+        const protectedRoutes = ['/profile'];
 
-  return <>{children}</>;
+        if (
+          protectedRoutes.some(route =>
+            pathname.startsWith(route)
+          )
+        ) {
+          router.push('/auth/login?needsAuth=1');
+        }
+      });
+  }, [pathname]);
+
+  return children;
 }

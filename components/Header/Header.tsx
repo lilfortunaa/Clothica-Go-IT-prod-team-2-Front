@@ -4,11 +4,14 @@ import { useEffect, useState } from 'react';
 import css from './Header.module.css';
 import Link from 'next/link';
 import AuthNavigation from '@/components/AuthNavigation/AuthNavigation';
-import { usePathname } from 'next/navigation';
+import { usePathname, useRouter } from 'next/navigation';
+import { useBasketStore } from '@/lib/store/basketStore';
 
 export default function Header() {
   const [isOpenMenu, setIsOpenMenu] = useState(false);
   const pathname = usePathname();
+  const router = useRouter();
+  const items = useBasketStore(state => state.items);
 
   const openMenu = () => setIsOpenMenu(true);
   const closeMenu = () => setIsOpenMenu(false);
@@ -110,7 +113,11 @@ export default function Header() {
             </button>
           )}
 
-          <Link href="/order" className={css.basket}>
+          <button
+            onClick={() => router.push('/basket?from=ui')}
+            className={css.basket}
+            aria-label="Кошик"
+          >
             <svg
               className={css.iconBasket}
               width="20"
@@ -118,8 +125,10 @@ export default function Header() {
             >
               <use href="/sprite.svg/#icon-basket"></use>
             </svg>
-            <span className={css.count}>1</span>
-          </Link>
+            <span className={css.count}>
+              {items.length}
+            </span>
+          </button>
         </div>
       </div>
 

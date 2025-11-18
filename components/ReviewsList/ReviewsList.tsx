@@ -42,6 +42,7 @@ type ReviewsListProps = {
   id?: string;
   title?: string;
   showAddButton?: boolean;
+  onOpenModal?: () => void;
 };
 
 const ReviewsList = ({

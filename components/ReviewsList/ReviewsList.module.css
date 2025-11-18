@@ -69,41 +69,6 @@
   color: #000;
 }
 
-.addButton {
-  border: 1px solid #c5e1a5;
-  border-radius: 100px;
-
-  width: 156px;
-  height: 36px;
-  background: #c5e1a5;
-  font-family: 'Inter', sans-serif;
-  font-weight: 500;
-  font-size: 16px;
-  line-height: 1.5;
-  color: #000;
-  margin-top: -20px;
-  margin-bottom: 46px;
-
-  cursor: pointer;
-  transition:
-    border-color 0.2s ease,
-    background 0.2s ease,
-    color 0.2s ease;
-}
-
-.addButton:hover,
-.addButton:focus {
-  border: 1px solid #4e5a42;
-  background: #9db484;
-  outline: none;
-}
-
-.addButton:active {
-  border: 1px solid #c5e1a5;
-  background: #3b4331;
-  color: #fff;
-}
-
 .link {
   font-weight: 600;
   font-size: 12px;

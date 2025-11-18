@@ -10,7 +10,6 @@ import css from './ReviewsList.module.css';
 import { Review } from '@/types/review';
 import { fetchReviews } from '@/lib/api/clientApi';
 import Loader from '../Loader/Loader';
-import { useRouter } from 'next/navigation';
 
 const StarRating = ({ rating }: { rating: number }) => {
   const stars = [];
@@ -47,8 +46,9 @@ type ReviewsListProps = {
 
 const ReviewsList = ({
   id,
-  title,
+  title = 'Останні відгуки',
   showAddButton,
+  onOpenModal,
 }: ReviewsListProps) => {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -65,7 +65,7 @@ const ReviewsList = ({
 
   const reviews = Array.isArray(data) ? data : [];
   const totalReviews = reviews.length;
-  const router = useRouter();
+
   const swiperRef = useRef<any>(null);
   const [isBeginning, setIsBeginning] = useState(true);
   const [isEnd, setIsEnd] = useState(false);
@@ -95,12 +95,14 @@ const ReviewsList = ({
     return (
       <div className={css.container}>
         <h2 className={css.title}>{title}</h2>
-        {showAddButton && id && (
-          <button className={css.addButton}>
+        {showAddButton && (
+          <button
+            className={css.ButtonGreen}
+            onClick={onOpenModal}
+          >
             Залишити відгук
           </button>
         )}
-
         <p>Відгуків поки немає</p>
       </div>
     );
@@ -111,12 +113,12 @@ const ReviewsList = ({
 
   return (
     <div className={css.container}>
-      <div className={css.headerWrap}>
+      <div className={css.buttonWrapper}>
         <h2 className={css.title}>{title}</h2>
-        {showAddButton && id && (
+        {showAddButton && (
           <button
-            onClick={() => router.push('/basket?from=ui')}
-            className={css.addButton}
+            className={`${css.addButton} ButtonGreen`}
+            onClick={onOpenModal}
           >
             Залишити відгук
           </button>
@@ -161,7 +163,7 @@ const ReviewsList = ({
                     {review.author}
                   </h3>
                   <Link
-                    href={`/goods?category=${review.category}`}
+                    href={`/categories/${review.category}`}
                     className={css.link}
                   >
                     {review.category}

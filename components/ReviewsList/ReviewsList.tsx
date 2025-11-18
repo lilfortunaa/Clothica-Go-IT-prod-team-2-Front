@@ -45,8 +45,8 @@ type ReviewsListProps = {
 
 const ReviewsList = ({
   id,
-  title = 'Останні відгуки',
-  showAddButton = false,
+  title,
+  showAddButton,
 }: ReviewsListProps) => {
   const [mounted, setMounted] = useState(false);
   useEffect(() => setMounted(true), []);
@@ -93,11 +93,12 @@ const ReviewsList = ({
     return (
       <div className={css.container}>
         <h2 className={css.title}>{title}</h2>
-        {showAddButton && !id && (
+        {showAddButton && id && (
           <button className={css.addButton}>
             Додати відгук
           </button>
         )}
+
         <p>Відгуків поки немає</p>
       </div>
     );
@@ -109,7 +110,7 @@ const ReviewsList = ({
   return (
     <div className={css.container}>
       <h2 className={css.title}>{title}</h2>
-      {showAddButton && !id && (
+      {showAddButton && id && (
         <button className={css.addButton}>
           Додати відгук
         </button>

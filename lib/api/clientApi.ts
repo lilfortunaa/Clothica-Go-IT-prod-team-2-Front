@@ -8,6 +8,7 @@ import type { User, RegisterRequest } from '@/types/user';
 import { Category } from '@/types/category';
 import { GetGoodsParams, Good } from '@/types/goods';
 
+
 export const login = async (
   phone: string,
   password: string
@@ -132,24 +133,34 @@ export const getGoodsByFeedback = async (
     );
 };
 
+
 export const getGoods = async (
   params: GetGoodsParams = {},
   page: number = 1,
   perPage: number = 15
-): Promise<{ data: Good[]; totalGoods: number }> => {
-  const response = await nextServer.get<{
-    page: number;
-    perPage: number;
-    totalGoods: number;
-    totalPages: number;
-    data: Good[];
-  }>('/goods', { params: { ...params, page, perPage } });
+) => {
+  const response = await nextServer.get('/goods', {
+    params: { ...params, page, perPage },
+    paramsSerializer: (params) => {
+      const searchParams = new URLSearchParams();
+      Object.entries(params).forEach(([key, value]) => {
+        if (Array.isArray(value)) {
+          value.forEach(v => searchParams.append(key, v)); 
+        } else if (value !== undefined) {
+          searchParams.append(key, String(value));
+        }
+      });
+      return searchParams.toString();
+    },
+  });
 
   return {
     data: response.data.data,
     totalGoods: response.data.totalGoods,
   };
 };
+
+
 
 export const getGoodById = async (id: string) => {
   const res = await nextServer.get(`/goods/${id}`);

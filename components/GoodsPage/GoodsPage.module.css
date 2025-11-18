@@ -1,4 +1,4 @@
-/* ====== Wrapper ====== */
+/*  #region mobile  */
 .wrapper {
   max-width: 1440px;
   margin: 0 auto;
@@ -11,7 +11,7 @@
   flex-wrap: wrap;
 }
 
-/* ====== Sidebar ====== */
+
 .sidebar {
   width: 25%;
   display: flex;
@@ -23,7 +23,7 @@
   display: flex;
 }
 
-/* ====== Main Content ====== */
+
 .mainContent {
   width: 75%;
   display: flex;
@@ -32,7 +32,7 @@
   gap: 24px;
 }
 
-/* ====== Card ====== */
+
 .card {
   border-radius: 16px;
   overflow: hidden;
@@ -70,20 +70,22 @@
   font-weight: 600;
   line-height: 150%;
   color: #000;
+  height: calc(1.5em * 2);
+  overflow: hidden;
 }
 
-/* ====== Meta ====== */
+
 .leftMeta {
-  display: flex;        /* иконки в ряд */
+  display: flex;        
   align-items: center;
-  gap: 12px;            /* расстояние между иконками */
+  gap: 12px;            
   margin-bottom: 16px;
 }
 
 .metaItem {
-  display: flex;        /* иконка + текст в одной линии */
+  display: flex;        
   align-items: center;
-  gap: 4px;             /* расстояние между иконкой и цифрой */
+  gap: 4px;             
   color: #000;
 }
 
@@ -93,7 +95,7 @@
   color: #000;
 }
 
-/* ====== Price & Buttons ====== */
+
 .price {
   font-weight: 400;
   font-size: 14px;
@@ -136,7 +138,7 @@
   background-color: #BEE196;
 }
 
-/* ====== Mobile Filters ====== */
+
 .mobileFilters {
   width: 100%;
   display: flex;
@@ -212,7 +214,7 @@
   border-radius: 3px;
 }
 
-/* ====== Filter Blocks ====== */
+
 .filterBlock {
   margin-bottom: 12px;
 }
@@ -244,15 +246,17 @@
   border-color: #BEE196;
 }
 
-/* ====== Goods Grid ====== */
+
+
 .goodsGrid {
   display: grid;
   gap: 32px;
-  justify-items: center;
+  justify-items: stretch;
+  align-items: start;
 }
+/*  #endregion mobile  */
 
-
-/* ====== Media Queries ====== */
+/* #region tablet */
 @media (max-width: 767px) {
   .wrapper {
     flex-direction: column;
@@ -301,6 +305,10 @@
   }
 }
 
+/* #endregion tablet */
+
+/* #region desktop */
+
 @media (min-width: 1200px) {
   .wrapper {
     display: grid;
@@ -333,3 +341,5 @@
     font-size: 18px;
   }
 }
+
+/* #endregion desktop */

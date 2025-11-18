@@ -1,5 +1,6 @@
 
-'use client'
+'use client';
+
 import React, { useState, useEffect } from 'react';
 import { Good, GetGoodsParams } from '@/types/goods';
 import { getGoods, getCategories } from '@/lib/api/clientApi';
@@ -7,12 +8,14 @@ import MessageNoInfo from '@/components/MessageNoInfo/MessageNoInfo';
 import SideBarGoods from '../../app/goods/filter/@sidebar/SideBarGoods';
 import styles from './GoodsPage.module.css';
 import Link from 'next/link';
+import { useQuery } from '@tanstack/react-query';
 
 export interface CategoryItem {
   _id: string;
   name: string;
   image: string;
   goodsCount: number;
+  availableSizes?: string[];
 }
 
 export interface FiltersResponse {
@@ -29,97 +32,102 @@ export interface SelectedFilters {
   maxPrice?: number;
 }
 
+interface GoodsResponse {
+  data: Good[];
+  totalGoods: number;
+}
+
 export default function GoodsPage() {
-  const [filters, setFilters] = useState<FiltersResponse>({
-    categories: [],
-    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
-    genders: [
-      { label: 'Всі', value: '' },
-      { label: 'Жіноча', value: 'women' },
-      { label: 'Чоловіча', value: 'man' },
-      { label: 'Унісекс', value: 'unisex' }
-    ]
-  });
+  const [isMobile, setIsMobile] = useState(false);
+  const [dropdownOpen, setDropdownOpen] = useState(false);
+
+  const [page, setPage] = useState(1);
+  const perPage = 15;
 
   const [selectedFilters, setSelectedFilters] = useState<SelectedFilters>({
     category: undefined,
     size: [],
     gender: undefined,
     minPrice: undefined,
-    maxPrice: undefined
+    maxPrice: undefined,
   });
 
-  const [goods, setGoods] = useState<Good[]>([]);
-  const [totalGoods, setTotalGoods] = useState(0);
-  const [page, setPage] = useState(1);
-  const [perPage, setPerPage] = useState(15);
-  const [isMobile, setIsMobile] = useState(false);
-  const [dropdownOpen, setDropdownOpen] = useState(false);
 
-  const updateDevice = () => {
-    const width = window.innerWidth;
-    setIsMobile(width < 768);
-    setPerPage(15);
+  const baseFilters: FiltersResponse = {
+    categories: [],
+    sizes: ['S', 'M', 'L', 'XL', 'XXL'],
+    genders: [
+      { label: 'Всі', value: '' },
+      { label: 'Жіноча', value: 'women' },
+      { label: 'Чоловіча', value: 'man' },
+      { label: 'Унісекс', value: 'unisex' },
+    ],
   };
 
-  useEffect(() => {
-    updateDevice();
-    window.addEventListener('resize', updateDevice);
-    return () => window.removeEventListener('resize', updateDevice);
-  }, []);
 
   useEffect(() => {
-    const fetchCategories = async () => {
-      try {
-        const cats = await getCategories();
-        const preparedCats: CategoryItem[] = cats.map(c => ({
-          _id: c._id,
-          name: c.name,
-          image: c.image,
-          goodsCount: c.goodsCount ?? 0
-        }));
-        setFilters(prev => ({ ...prev, categories: preparedCats }));
-      } catch (err) {
-        console.error('Ошибка при получении категорий:', err);
-      }
-    };
-    fetchCategories();
+    const update = () => setIsMobile(window.innerWidth < 768);
+    update();
+    window.addEventListener('resize', update);
+    return () => window.removeEventListener('resize', update);
   }, []);
 
-  const fetchGoodsData = async (reset = false) => {
-    try {
+
+  const categoriesQuery = useQuery<CategoryItem[]>({
+    queryKey: ['categories'],
+    queryFn: async () => {
+      const cats = await getCategories();
+      return cats.map(c => ({
+        _id: c._id,
+        name: c.name,
+        image: c.image,
+        goodsCount: c.goodsCount ?? 0,
+        availableSizes: c.availableSizes,
+      }));
+    },
+    staleTime: 1000 * 60 * 10,
+  });
+
+
+  const filters: FiltersResponse = {
+    ...baseFilters,
+    categories: categoriesQuery.data ?? [],
+  };
+
+
+  const goodsQuery = useQuery<GoodsResponse>({
+    queryKey: ['goods', selectedFilters, page, perPage],
+    queryFn: async (): Promise<GoodsResponse> => {
       const params: GetGoodsParams = {
         page,
         perPage,
         category: selectedFilters.category,
-        size: selectedFilters.size.length > 0 ? selectedFilters.size : undefined,
+        size: selectedFilters.size.length ? selectedFilters.size : undefined,
         gender: selectedFilters.gender,
         minPrice: selectedFilters.minPrice,
-        maxPrice: selectedFilters.maxPrice
+        maxPrice: selectedFilters.maxPrice,
       };
+      return await getGoods(params, page, perPage);
+    },
 
-      const { data, totalGoods: total } = await getGoods(params, page, perPage);
-      setGoods(reset ? data : [...goods, ...data]);
-      setTotalGoods(total);
-    } catch (err) {
-      console.error('Ошибка при получении товаров:', err);
-      if (reset) setGoods([]);
-      setTotalGoods(0);
-    }
-  };
+    placeholderData: prev => prev,
+  });
+
+
+  const goods = goodsQuery.data?.data ?? [];
+  const totalGoods = goodsQuery.data?.totalGoods ?? 0;
+  const isFetching = goodsQuery.isFetching;
+
 
   useEffect(() => {
     setPage(1);
-    fetchGoodsData(true);
   }, [selectedFilters]);
 
-  useEffect(() => {
-    if (page === 1) return;
-    fetchGoodsData();
-  }, [page]);
 
   const handleShowMore = () => {
-    if (goods.length < totalGoods) setPage(prev => prev + 1);
+    if (goods.length < totalGoods) {
+      setPage(prev => prev + 1);
+    }
   };
 
   const handleClearAll = () =>
@@ -128,22 +136,30 @@ export default function GoodsPage() {
       size: [],
       gender: undefined,
       minPrice: undefined,
-      maxPrice: undefined
+      maxPrice: undefined,
     });
 
   const handleClearFilter = (key: keyof SelectedFilters) => {
     setSelectedFilters(prev => ({
       ...prev,
-      [key]: key === 'size' ? [] : undefined
+      [key]: key === 'size' ? [] : undefined,
     }));
   };
 
   const handleCategoryClick = (categoryId?: string) => {
-    setSelectedFilters(prev => ({ ...prev, category: categoryId }));
+    const availableSizes =
+      filters.categories.find(c => c._id === categoryId)?.availableSizes || [];
+
+    setSelectedFilters(prev => ({
+      ...prev,
+      category: categoryId,
+      size: prev.size.filter(s => availableSizes.includes(s)),
+    }));
   };
 
   return (
     <section className={styles.wrapper}>
+
       {!isMobile && (
         <aside className={styles.container}>
           <SideBarGoods
@@ -157,6 +173,8 @@ export default function GoodsPage() {
       )}
 
       <main className={styles.mainContent}>
+
+ 
         {isMobile && (
           <div className={styles.mobileFilters}>
             <h2 className={styles.mobileTitle}>Всі товари</h2>
@@ -173,23 +191,28 @@ export default function GoodsPage() {
             </div>
 
             <div className={styles.dropdown}>
-              <div className={styles.dropdownHeader} onClick={() => setDropdownOpen(!dropdownOpen)}>
+              <div
+                className={styles.dropdownHeader}
+                onClick={() => setDropdownOpen(!dropdownOpen)}
+              >
                 <span>Фільтри</span>
-                 <svg className={styles.arrowIcon}>
-                    <use href={`/sprite.svg#${dropdownOpen ? 'icon-arrow-top' : 'icon-arrow-bottom'}`} />
+                <svg className={styles.arrowIcon}>
+                  <use
+                    href={`/sprite.svg#${dropdownOpen ? 'icon-arrow-top' : 'icon-arrow-bottom'}`}
+                  />
                 </svg>
               </div>
 
               {dropdownOpen && (
                 <div className={styles.dropdownContent}>
 
+              
                   <div className={styles.filterBlock}>
-                    <div className={styles.filterHeader}>
-                    </div>
-
                     <div className={styles.filterValues}>
                       <div
-                        className={`${styles.filterItem} ${!selectedFilters.category ? styles.selected : ''}`}
+                        className={`${styles.filterItem} ${
+                          !selectedFilters.category ? styles.selected : ''
+                        }`}
                         onClick={() => handleCategoryClick(undefined)}
                       >
                         Усі
@@ -209,26 +232,29 @@ export default function GoodsPage() {
                     </div>
                   </div>
 
-                  {/* Размеры */}
+                 
                   <div className={styles.filterBlock}>
                     <div className={styles.filterHeader}>
                       <strong>Розмір</strong>
-                      <button className={styles.clearAll} onClick={() => handleClearFilter('size')}>
+                      <button
+                        className={styles.clearAll}
+                        onClick={() => handleClearFilter('size')}
+                      >
                         Очистити
                       </button>
                     </div>
 
                     <div className={styles.filterValues}>
                       {filters.sizes.map(size => {
-                        const isActive = selectedFilters.size.includes(size);
+                        const active = selectedFilters.size.includes(size);
                         return (
                           <div
                             key={size}
-                            className={`${styles.filterItem} ${isActive ? styles.selected : ''}`}
+                            className={`${styles.filterItem} ${active ? styles.selected : ''}`}
                             onClick={() =>
                               setSelectedFilters(prev => ({
                                 ...prev,
-                                size: isActive
+                                size: active
                                   ? prev.size.filter(s => s !== size)
                                   : [...prev.size, size],
                               }))
@@ -241,26 +267,29 @@ export default function GoodsPage() {
                     </div>
                   </div>
 
-                  {/* Пол */}
+               
                   <div className={styles.filterBlock}>
                     <div className={styles.filterHeader}>
                       <strong>Стать</strong>
-                      <button className={styles.clearAll} onClick={() => handleClearFilter('gender')}>
+                      <button
+                        className={styles.clearAll}
+                        onClick={() => handleClearFilter('gender')}
+                      >
                         Очистити
                       </button>
                     </div>
 
                     <div className={styles.filterValues}>
                       {filters.genders.map(g => {
-                        const isActive = selectedFilters.gender === g.value;
+                        const active = selectedFilters.gender === g.value;
                         return (
                           <div
                             key={g.value || 'all'}
-                            className={`${styles.filterItem} ${isActive ? styles.selected : ''}`}
+                            className={`${styles.filterItem} ${active ? styles.selected : ''}`}
                             onClick={() =>
                               setSelectedFilters(prev => ({
                                 ...prev,
-                                gender: isActive ? undefined : g.value
+                                gender: active ? undefined : g.value,
                               }))
                             }
                           >
@@ -277,6 +306,7 @@ export default function GoodsPage() {
           </div>
         )}
 
+       
         {goods.length > 0 ? (
           <>
             <div className={styles.goodsGrid}>
@@ -322,15 +352,20 @@ export default function GoodsPage() {
 
             {goods.length < totalGoods && (
               <div className={styles.showMoreWrapper}>
-                <button onClick={handleShowMore} className={styles.showMoreBtn}>
-                  Показати більше
+                <button
+                  disabled={isFetching}
+                  onClick={handleShowMore}
+                  className={styles.showMoreBtn}
+                >
+                  {isFetching ? 'Завантаження...' : 'Показати більше'}
                 </button>
               </div>
             )}
           </>
         ) : (
-          <MessageNoInfo onClearFilters={handleClearAll}/>
+          <MessageNoInfo onClearFilters={handleClearAll} />
         )}
+
       </main>
     </section>
   );

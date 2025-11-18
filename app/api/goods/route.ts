@@ -8,7 +8,7 @@ export async function GET(req: NextRequest) {
     const category = req.nextUrl.searchParams.get('category') ?? undefined;
     const minPrice = req.nextUrl.searchParams.get('minPrice') ?? undefined;
     const maxPrice = req.nextUrl.searchParams.get('maxPrice') ?? undefined;
-    const size = req.nextUrl.searchParams.getAll('size'); // несколько size
+    const size = req.nextUrl.searchParams.getAll('size'); 
     const gender = req.nextUrl.searchParams.get('gender') ?? undefined;
 
     const params: Record<string, any> = { page, perPage };
@@ -16,8 +16,8 @@ export async function GET(req: NextRequest) {
     if (category && category !== 'Всі товари') params.category = category;
     if (minPrice) params.minPrice = minPrice;
     if (maxPrice) params.maxPrice = maxPrice;
-    if (size.length) params.size = size;          // size=S&size=M
-    if (gender) params.gender = gender;          // male/female/unisex
+    if (size.length) params.size = size;          
+    if (gender) params.gender = gender;          
 
     console.log('Sending params to API:', params);
 

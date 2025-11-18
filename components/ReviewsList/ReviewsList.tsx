@@ -161,7 +161,7 @@ const ReviewsList = ({
                     {review.author}
                   </h3>
                   <Link
-                    href={`/categories/${review.category}`}
+                    href={`/goods?category=${review.category}`}
                     className={css.link}
                   >
                     {review.category}

@@ -154,7 +154,11 @@ export default function GoodsDetailsClient() {
               </svg>
             </li>
             <li className={css.link}>
-              <Link href="/categories">Категорія</Link>
+              <Link
+                href={`/goods?category=${good.category}`}
+              >
+                Категорія
+              </Link>
             </li>
             <li className={css.link}>
               <svg className={css.svg}>

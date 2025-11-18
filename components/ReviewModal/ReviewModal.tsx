@@ -31,16 +31,17 @@ const initValues: FormValues = {
   rating: 0,
 };
 
-const ReviewSchema = Yup.object().shape({
-  name: Yup.string().required(`Введіть Ваше ім'я`),
+export const ReviewSchema = Yup.object().shape({
+  name: Yup.string()
+    .min(3, "Ім'я має містити принаймні 3 символи")
+    .required(`Введіть Ваше ім'я`),
   review: Yup.string()
-    .required(`Введіть Ваш відгук`)
-    .max(
-      500,
-      'Відгук не повинен перевищувати 500 символів'
-    ),
+    .min(5, 'Відгук має містити принаймні 5 символів')
+    .max(500, 'Відгук не повинен перевищувати 500 символів')
+    .required(`Введіть Ваш відгук`),
   rating: Yup.number()
-    .min(0.5, 'Вкажіть оцінку')
+    .min(1, 'Вкажіть оцінку від 1 до 5')
+    .max(5, 'Вкажіть оцінку від 1 до 5')
     .required('Вкажіть оцінку'),
 });
 
@@ -75,8 +76,29 @@ export default function ReviewModal({
     };
 
     setLoading(true);
-    createMutation(payload);
-    setLoading(false);
+
+    try {
+      await createReview(payload);
+      toast.success('Ваш відгук відправлено!');
+      queryClient.invalidateQueries({
+        queryKey: ['reviews', goodId],
+      });
+      onClose();
+    } catch (err: any) {
+      const message =
+        err.response?.data?.message ||
+        err.response?.data?.error ||
+        err.message ||
+        'Щось пішло не так';
+
+      toast.error(message);
+      console.error(
+        'Failed to create feedback:',
+        err.response?.data || err
+      );
+    } finally {
+      setLoading(false);
+    }
   };
 
   const handleBackdrop = (

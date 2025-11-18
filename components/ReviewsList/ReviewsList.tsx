@@ -47,7 +47,7 @@ type ReviewsListProps = {
 const ReviewsList = ({
   id,
   title = 'Останні відгуки',
-  showAddButton = false,
+  showAddButton,
   onOpenModal,
 }: ReviewsListProps) => {
   const [mounted, setMounted] = useState(false);
@@ -95,7 +95,7 @@ const ReviewsList = ({
     return (
       <div className={css.container}>
         <h2 className={css.title}>{title}</h2>
-        {showAddButton && !id && (
+        {showAddButton && (
           <button
             className={css.ButtonGreen}
             onClick={onOpenModal}
@@ -115,7 +115,7 @@ const ReviewsList = ({
     <div className={css.container}>
       <div className={css.buttonWrapper}>
         <h2 className={css.title}>{title}</h2>
-        {showAddButton && !id && (
+        {showAddButton && (
           <button
             className={`${css.addButton} ButtonGreen`}
             onClick={onOpenModal}

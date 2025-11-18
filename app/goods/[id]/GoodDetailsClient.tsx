@@ -285,7 +285,7 @@ export default function GoodsDetailsClient() {
         <ReviewModal
           onClose={handleCloseModal}
           goodId={id}
-        ></ReviewModal>
+        />
       )}
     </>
   );

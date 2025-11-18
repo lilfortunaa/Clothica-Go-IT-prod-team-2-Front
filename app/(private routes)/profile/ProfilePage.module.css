@@ -85,9 +85,7 @@
   width: 335px;
   height: 40px;
   background: #fff;
-  /* змінив з прозорого на білий */
   color: #000;
-  /* додав для гарантії, що текст чорний */
   transition: transform 0.3s ease;
 }
 
@@ -97,6 +95,13 @@
   box-shadow: 0 0 0 3px #c5e1a51a;
 }
 
+.formRow {
+  display: flex;
+  flex-direction: column;
+  margin: 0 auto;
+  gap: 5px;
+}
+
 .inputTextArea {
   border: 1px solid rgba(0, 0, 0, 0.15);
   border-radius: 16px;
@@ -104,6 +109,13 @@
   width: 335px;
   height: 180px;
   color: #000;
+  background: rgb(255, 255, 255);
+  resize: none;
+  overflow: auto;
+}
+
+.inputTextArea:focus {
+  outline: none;
 }
 
 .saveInputButton {
@@ -266,9 +278,15 @@
   flex-direction: column;
 }
 
+
 @media (min-width: 768px) {
   .container {
     padding: 64px 32px 48px;
+  }
+
+  .inputTextArea {
+    width: 704px;
+    height: 180px;
   }
 
   .containerProfileInfo {
@@ -293,9 +311,7 @@
     display: none;
   }
 
-  .inputTextArea {
-    display: none;
-  }
+
 
   .saveInputButton {
     width: 147px;
@@ -337,6 +353,11 @@
 
   .titleProfilePage {
     font-size: 48px;
+  }
+
+  .inputTextArea {
+    width: 640px;
+    height: 180px;
   }
 
   .containerCabinetWithoutTitle {

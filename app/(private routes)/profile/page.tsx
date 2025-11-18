@@ -14,9 +14,10 @@ import { useFormik } from 'formik';
 import * as Yup from 'yup';
 import css from './ProfilePage.module.css';
 import Loading from '@/app/loading';
-import { User } from '@/types/user';
+import { User, UserFormValues } from '@/types/user';
 import { useQuery } from '@tanstack/react-query';
 import { Order } from '@/types/order';
+import PersonalInfoForm from '@/components/PersonalInfoForm/PersonalInfoForm';
 
 export const userSchema = Yup.object({
   firstName: Yup.string().required("Ім'я обов'язкове"),
@@ -56,33 +57,27 @@ const ProfilePage = () => {
     queryFn: fetchMyOrders,
   });
 
-  const formik = useFormik({
+  const formik = useFormik<UserFormValues>({
     enableReinitialize: true,
     initialValues: {
-      ...defaultUserValues,
-      ...(user || {}),
+      _id: user?._id,
+      firstName: user?.firstName || '',
+      lastName: user?.lastName || '',
       phone: user?.phone?.toString() || '',
-      postOffice: user?.postOffice?.toString() || '',
+      email: user?.email || '',
+      city: user?.city || '',
+      postOffice: user?.postOffice || '',
     },
     validationSchema: userSchema,
     onSubmit: async values => {
-      try {
-        const payload: Partial<User> = {
-          ...values,
-          phone: Number(values.phone),
-          postOffice: values.postOffice
-            ? String(values.postOffice)
-            : undefined,
-        };
-        const updatedUser =
-          await updateUserProfile(payload);
-        setUser(updatedUser);
-        toast.success('Профіль оновлено');
-        router.push('/profile');
-      } catch (err) {
-        console.error(err);
-        setError('Failed to update profile');
-      }
+      const payload: Partial<User> = {
+        ...values,
+        phone: Number(values.phone),
+      };
+      const updatedUser = await updateUserProfile(payload);
+      setUser(updatedUser);
+      toast.success('Профіль оновлено');
+      router.push('/profile');
     },
   });
 
@@ -103,169 +98,11 @@ const ProfilePage = () => {
         <div className={css.cabinetContainer}>
           <h1 className={css.titleProfilePage}>Кабінет</h1>
           <div className={css.containerCabinetWithoutTitle}>
-            <section
-              className={css.containerPageProfileFirst}
-            >
-              <form
-                className={css.profileInfo}
-                onSubmit={formik.handleSubmit}
-              >
-                <h2 className={css.titleForm}>
-                  Особиста інформація
-                </h2>
-                <div className={css.containerProfileInfo}>
-                  <div className={css.profileInfoItems}>
-                    <div
-                      className={css.profileInfoItemsGroup}
-                    >
-                      <label
-                        className={css.labelForm}
-                        htmlFor="firstName"
-                      >
-                        Ім'я*:
-                      </label>
-                      <input
-                        id="firstName"
-                        name="firstName"
-                        type="text"
-                        className={css.inputForm}
-                        value={formik.values.firstName}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        placeholder="Ваше імʼя"
-                        required
-                      />
-                      {formik.touched.firstName &&
-                        formik.errors.firstName && (
-                          <div
-                            className={
-                              css.textMessageNoInfo
-                            }
-                          >
-                            {formik.errors.firstName}
-                          </div>
-                        )}
-                    </div>
-                    <div
-                      className={css.profileInfoItemsGroup}
-                    >
-                      <label
-                        className={css.labelForm}
-                        htmlFor="lastName"
-                      >
-                        Прізвище*:
-                      </label>
-                      <input
-                        id="lastName"
-                        name="lastName"
-                        type="text"
-                        className={css.inputForm}
-                        value={formik.values.lastName}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        placeholder="Ваше прізвище"
-                        required
-                      />
-                      {formik.touched.lastName &&
-                        formik.errors.lastName && (
-                          <div
-                            className={
-                              css.textMessageNoInfo
-                            }
-                          >
-                            {formik.errors.lastName}
-                          </div>
-                        )}
-                    </div>
-                  </div>
-                  <div className={css.profileInfoItems}>
-                    <div
-                      className={css.profileInfoItemsGroup}
-                    >
-                      <label
-                        className={css.labelForm}
-                        htmlFor="phone"
-                      >
-                        Номер*:
-                      </label>
-                      <input
-                        id="phone"
-                        name="phone"
-                        type="tel"
-                        className={`${css.inputForm} ${css.inputPhone}`}
-                        value={formik.values.phone}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        placeholder="+38 (0__) ___-__-__"
-                        required
-                      />
-                      {formik.touched.phone &&
-                        formik.errors.phone && (
-                          <div
-                            className={
-                              css.textMessageNoInfo
-                            }
-                          >
-                            {formik.errors.phone}
-                          </div>
-                        )}
-                    </div>
-                  </div>
-                  <div className={css.profileInfoItems}>
-                    <div
-                      className={css.profileInfoItemsGroup}
-                    >
-                      <label
-                        className={css.labelForm}
-                        htmlFor="city"
-                      >
-                        Місто доставки*:
-                      </label>
-                      <input
-                        id="city"
-                        name="city"
-                        type="text"
-                        className={css.inputForm}
-                        value={formik.values.city}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        placeholder="Ваше місто"
-                        required
-                      />
-                    </div>
-                    <div
-                      className={css.profileInfoItemsGroup}
-                    >
-                      <label
-                        className={css.labelForm}
-                        htmlFor="postOffice"
-                      >
-                        Номер відділення Нової Пошти*:
-                      </label>
-                      <input
-                        id="postOffice"
-                        name="postOffice"
-                        type="text"
-                        className={css.inputForm}
-                        value={formik.values.postOffice}
-                        onChange={formik.handleChange}
-                        onBlur={formik.handleBlur}
-                        placeholder="1"
-                        required
-                      />
-                    </div>
-                  </div>
-                </div>
-                <button
-                  type="submit"
-                  className={css.saveInputButton}
-                >
-                  Зберегти зміни
-                </button>
-              </form>
-            </section>
-
-            {/* --- Мої замовлення --- */}
+            <PersonalInfoForm
+              formik={formik}
+              showComment={false}
+              title="Особиста інформація"
+            />
             <section
               className={css.containerPageProfileSecond}
             >

@@ -118,9 +118,10 @@ export const fetchReviews = async (
 export const createReview = async (
   review: ReviewRequestBody
 ): Promise<Review> => {
-  const res = await nextServer.post<Review>('/feedbacks', {
-    review,
-  });
+  const res = await nextServer.post<Review>(
+    '/feedbacks',
+    review
+  );
   return res.data;
 };
 

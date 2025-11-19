@@ -8,7 +8,7 @@
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  max-width: 375px;
+
   background-color: #d6eac0;
   border-bottom: 1px solid #9db484;
   padding: 18px 20px;
@@ -200,12 +200,10 @@
 .skeletonBox {
   width: 80px;
   height: 36px;
-  background: linear-gradient(
-    90deg,
-    rgba(0, 0, 0, 0.06) 25%,
-    rgba(0, 0, 0, 0.12) 50%,
-    rgba(0, 0, 0, 0.06) 75%
-  );
+  background: linear-gradient(90deg,
+      rgba(0, 0, 0, 0.06) 25%,
+      rgba(0, 0, 0, 0.12) 50%,
+      rgba(0, 0, 0, 0.06) 75%);
   background-size: 200% 100%;
   animation: loading 1.5s infinite;
   border-radius: 20px;
@@ -218,6 +216,12 @@
 
   100% {
     background-position: -200% 0;
+  }
+}
+
+@media screen and (min-width: 375px) {
+  .container {
+    max-width: 375px;
   }
 }
 

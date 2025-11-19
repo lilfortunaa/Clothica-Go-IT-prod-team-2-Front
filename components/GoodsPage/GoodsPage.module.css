@@ -1,14 +1,16 @@
 /*  #region mobile  */
 .wrapper {
-  max-width: 1440px;
+  width: 100%;
+
   margin: 0 auto;
   padding: 48px 32px;
   display: flex;
-  justify-content: flex-start;
-  align-items: flex-start;
+  justify-content: center;
+  align-items: center;
   gap: 24px;
   box-sizing: border-box;
   flex-wrap: wrap;
+
 }
 
 
@@ -259,8 +261,9 @@
 /*  #endregion mobile  */
 
 /* #region tablet */
-@media (max-width: 767px) {
+@media (min-width: 768px) {
   .wrapper {
+    max-width: 768px;
     flex-direction: column;
   }
 
@@ -323,6 +326,7 @@
 @media (min-width: 1200px) {
   .wrapper {
     display: grid;
+
     grid-template-columns: 260px 1fr;
     gap: 32px;
     align-items: flex-start;
@@ -356,6 +360,12 @@
 
   .title {
     font-size: 18px;
+  }
+}
+
+@media (min-width: 1440px) {
+  .wrapper {
+    max-width: 1440px;
   }
 }
 

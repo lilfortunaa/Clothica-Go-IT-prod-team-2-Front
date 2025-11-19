@@ -3,6 +3,7 @@
   flex-direction: column;
   gap: 24px;
   width: 100%;
+
 }
 
 .title {
@@ -103,7 +104,7 @@
   position: relative;
 }
 
-.checkboxLabel input:checked + .customCheckbox {
+.checkboxLabel input:checked+.customCheckbox {
   background-color: #000;
   border-color: #000;
 }
@@ -132,7 +133,7 @@
   background-color: #fff;
 }
 
-.radioLabel input:checked + .customRadio::after {
+.radioLabel input:checked+.customRadio::after {
   content: '';
   position: absolute;
   top: 50%;
@@ -140,12 +141,14 @@
   transform: translate(-50%, -50%);
   width: 8px;
   height: 8px;
-  background-color: #fff; /* белый внутренний круг */
+  background-color: #fff;
+  /* белый внутренний круг */
   border-radius: 50%;
-  box-shadow: 0 0 0 2px #000; /* черный внешний круг */
+  box-shadow: 0 0 0 2px #000;
+  /* черный внешний круг */
 }
 
-.radioLabel input:checked + .customRadio {
+.radioLabel input:checked+.customRadio {
   background-color: #000;
   border-color: #000;
 }
@@ -154,7 +157,7 @@
 @media (min-width: 1440px) {
   .sidebar {
     gap: 32px;
-   
+
   }
 
   .title {
@@ -167,13 +170,13 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-}
+  }
 
-    .filterBlock {
+  .filterBlock {
     display: flex;
     flex-direction: column;
     gap: 8px;
-    }
+  }
 
   .clearBtn {
     font-size: 16px;
@@ -213,12 +216,12 @@
     height: 20px;
   }
 
-  .radioLabel input:checked + .customRadio::after {
+  .radioLabel input:checked+.customRadio::after {
     width: 10px;
     height: 10px;
   }
 
-  .checkboxLabel input:checked + .customCheckbox::after {
+  .checkboxLabel input:checked+.customCheckbox::after {
     width: 10px;
     height: 12px;
   }

@@ -22,3 +22,17 @@ export interface LoginRequest {
   phone: string;
   password: string;
 }
+
+export interface UserFormValues {
+  _id?: string;
+  firstName: string;
+  lastName: string;
+  phone: string;
+  email: string;
+  city: string;
+  postOffice: string;
+  avatar?: string;
+  comment?: string;
+  createdAt?: string;
+  updatedAt?: string;
+}

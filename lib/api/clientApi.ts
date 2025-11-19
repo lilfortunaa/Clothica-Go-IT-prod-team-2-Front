@@ -152,6 +152,19 @@ export const getGoodById = async (id: string) => {
   return res.data;
 };
 
+export const createOrder = async (payload: any) => {
+  const { data } = await nextServer.post(
+    '/orders',
+    payload
+  );
+  return data;
+};
+
+export const getMyOrders = async () => {
+  const { data } = await nextServer.get('/orders');
+  return data;
+};
+
 export const fetchMyOrders = async (): Promise<Order[]> => {
   try {
     const { data } = await nextServer.get<{

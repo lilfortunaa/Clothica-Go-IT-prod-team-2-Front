@@ -326,8 +326,8 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  flex-direction: row;
-  gap: 32px;
+  flex-direction: column;
+  gap: 20px;
   border-radius: 16px;
   padding: 24px 0px;
   width: 100%;
@@ -364,7 +364,10 @@
   max-width: 303px;
   height: 36px;
   background: #c5e1a5;
+  margin: 0 auto;
 }
+
+
 
 .orderForm {
   display: flex;

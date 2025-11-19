@@ -8,10 +8,12 @@ import styles from './BasketModal.module.css';
 
 type GoodsOrderListProps = {
   items: BasketItem[];
+  title?: string;
 };
 
 export default function GoodsOrderList({
   items,
+  title,
 }: GoodsOrderListProps) {
   const {
     updateQuantity,
@@ -32,9 +34,8 @@ export default function GoodsOrderList({
   const total = subtotal + delivery;
 
   return (
-  <div className={styles.modalContent}>
     <div className={styles.orderProducts}>
-  
+      <h2 className={styles.blockTitle}>{title}</h2>
       <div className={styles.productsList}>
         {items.map(item => (
           <div
@@ -50,17 +51,19 @@ export default function GoodsOrderList({
                 className={styles.productImage}
               />
             )}
-  
+
             <div className={styles.productInfo}>
               <div className={styles.productText}>
-                <p className={styles.productName}>{item.name}</p>
-  
+                <p className={styles.productName}>
+                  {item.name}
+                </p>
+
                 {item.size && (
                   <p className={styles.productSize}>
                     Розмір: {item.size}
                   </p>
                 )}
-  
+
                 <div className={styles.productMeta}>
                   <div className={styles.ratingGroup}>
                     <svg width="14" height="14">
@@ -70,7 +73,7 @@ export default function GoodsOrderList({
                       {item.avgRating}
                     </span>
                   </div>
-  
+
                   <div className={styles.reviewsGroup}>
                     <svg width="14" height="14">
                       <use href="/sprite.svg#icon-comment-section" />
@@ -81,13 +84,15 @@ export default function GoodsOrderList({
                   </div>
                 </div>
               </div>
-  
+
               <div className={styles.productRight}>
                 <p className={styles.productPrice}>
-                  {(item.price.value * item.quantity).toLocaleString()}{" "}
+                  {(
+                    item.price.value * item.quantity
+                  ).toLocaleString()}{' '}
                   {item.price.currency}
                 </p>
-  
+
                 <div className={styles.quantityButtonRow}>
                   <input
                     type="number"
@@ -95,20 +100,31 @@ export default function GoodsOrderList({
                     defaultValue={item.quantity}
                     onBlur={e => {
                       const val = Number(e.target.value);
-                      handleQuantityChange(item._id, val < 1 ? 1 : val);
+                      handleQuantityChange(
+                        item._id,
+                        val < 1 ? 1 : val
+                      );
                     }}
                     onKeyDown={e => {
-                      if (e.key === "Enter") {
-                        const val = Number((e.target as HTMLInputElement).value);
-                        handleQuantityChange(item._id, val < 1 ? 1 : val);
+                      if (e.key === 'Enter') {
+                        const val = Number(
+                          (e.target as HTMLInputElement)
+                            .value
+                        );
+                        handleQuantityChange(
+                          item._id,
+                          val < 1 ? 1 : val
+                        );
                       }
                     }}
                     className={styles.quantityInput}
                   />
-  
+
                   <button
                     className={styles.removeButton}
-                    onClick={() => removeFromBasket(item._id)}
+                    onClick={() =>
+                      removeFromBasket(item._id)
+                    }
                     aria-label="Видалити товар"
                   >
                     <svg width="20" height="20">
@@ -121,25 +137,23 @@ export default function GoodsOrderList({
           </div>
         ))}
       </div>
-  
+
       <div className={styles.orderSummary}>
         <div className={styles.summaryRow}>
           <span>Проміжний підсумок</span>
           <span>{subtotal.toLocaleString()} грн</span>
         </div>
-  
+
         <div className={styles.summaryRow}>
           <span>Доставка (5%)</span>
           <span>{delivery.toLocaleString()} грн</span>
         </div>
-  
+
         <div className={styles.summaryRowTotal}>
           <span>Всього</span>
           <span>{total.toLocaleString()} грн</span>
         </div>
       </div>
     </div>
-  </div>
-);
-
+  );
 }

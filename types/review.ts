@@ -5,6 +5,7 @@ export interface Review {
   author: string;
   rate: number;
   description: string;
+  categoryId: string;
   date: string;
   createdAt: string;
   updatedAt: string;

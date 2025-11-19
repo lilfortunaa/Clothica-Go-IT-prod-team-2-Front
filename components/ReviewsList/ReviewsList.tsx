@@ -154,12 +154,14 @@ const ReviewsList = ({
                   <h3 className={css.author}>
                     {review.author}
                   </h3>
-                  <Link
-                    href={`/categories/${review.category}`}
-                    className={css.link}
-                  >
-                    {review.category}
-                  </Link>
+                  {!showAddButton && (
+                    <Link
+                      href={`/goods?category=${review.categoryId}`}
+                      className={css.link}
+                    >
+                      {review.category}
+                    </Link>
+                  )}
                 </div>
               </li>
             </SwiperSlide>

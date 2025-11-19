@@ -18,13 +18,13 @@ import {
 } from '@/lib/api/clientApi';
 import SideBarGoods from '../../app/goods/filter/@sidebar/SideBarGoods';
 import MessageNoInfo from '@/components/MessageNoInfo/MessageNoInfo';
-import Loader from '../Loader/Loader';
 import styles from './GoodsPage.module.css';
 import Link from 'next/link';
 import {
   CategoryItem,
   SelectedFilters,
 } from '@/types/filters';
+import GoodsLoader from '../GoodsLoader/GoodsLoader';
 
 export default function GoodsPage() {
   const router = useRouter();
@@ -32,9 +32,7 @@ export default function GoodsPage() {
 
   const [page, setPage] = useState<number>(1);
   const perPage = 15;
-
   const [allGoods, setAllGoods] = useState<Good[]>([]);
-
   const isFirstRender = useRef(true);
 
   const externalFilters = useMemo<SelectedFilters>(() => {
@@ -44,7 +42,6 @@ export default function GoodsPage() {
     const minPrice = searchParams.get('minPrice');
     const maxPrice = searchParams.get('maxPrice');
     const sizes = searchParams.getAll('size');
-
     return {
       category,
       gender,
@@ -136,7 +133,6 @@ export default function GoodsPage() {
 
   useEffect(() => {
     if (!goodsQuery.data) return;
-
     if (page === 1) {
       setAllGoods(goodsQuery.data.data);
     } else {
@@ -147,9 +143,7 @@ export default function GoodsPage() {
     }
   }, [goodsQuery.data, page]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [selectedFilters]);
+  useEffect(() => setPage(1), [selectedFilters]);
 
   useEffect(() => {
     const params = new URLSearchParams();
@@ -180,15 +174,12 @@ export default function GoodsPage() {
     }
   }, [selectedFilters, router]);
 
-  if (goodsQuery.isLoading) return <Loader />;
-
   const handleShowMore = () => {
-    if (allGoods.length < totalGoods) {
+    if (allGoods.length < totalGoods)
       setPage(prev => prev + 1);
-    }
   };
 
-  const handleClearAll = () => {
+  const handleClearAll = () =>
     setSelectedFilters({
       category: undefined,
       size: [],
@@ -196,21 +187,16 @@ export default function GoodsPage() {
       minPrice: undefined,
       maxPrice: undefined,
     });
-  };
 
-  const handleClearFilter = (
-    key: keyof SelectedFilters
-  ) => {
+  const handleClearFilter = (key: keyof SelectedFilters) =>
     setSelectedFilters(prev => ({
       ...prev,
       [key]: key === 'size' ? [] : undefined,
     }));
-  };
 
   const handleCategoryClick = (id?: string) => {
     const cat = filters.categories.find(c => c._id === id);
     const avail = cat?.availableSizes ?? [];
-
     setSelectedFilters(prev => ({
       ...prev,
       category: id,
@@ -238,7 +224,6 @@ export default function GoodsPage() {
             <h2 className={styles.mobileTitle}>
               Всі товари
             </h2>
-
             <div className={styles.filtersHeader}>
               <span className={styles.filtersLabel}>
                 Фільтри
@@ -250,11 +235,9 @@ export default function GoodsPage() {
                 Очистити всі
               </button>
             </div>
-
             <div className={styles.showCount}>
               Показано {allGoods.length} з {totalGoods}
             </div>
-
             <div className={styles.dropdown}>
               <div
                 className={styles.dropdownHeader}
@@ -269,33 +252,23 @@ export default function GoodsPage() {
                   />
                 </svg>
               </div>
-
               {dropdownOpen && (
                 <div className={styles.dropdownContent}>
+                  {/* Категорії */}
                   <div className={styles.filterBlock}>
                     <div className={styles.filterValues}>
                       <div
-                        className={`${styles.filterItem} ${
-                          !selectedFilters.category
-                            ? styles.selected
-                            : ''
-                        }`}
+                        className={`${styles.filterItem} ${!selectedFilters.category ? styles.selected : ''}`}
                         onClick={() =>
                           handleCategoryClick(undefined)
                         }
                       >
                         Усі
                       </div>
-
                       {filters.categories.map(c => (
                         <div
                           key={c._id}
-                          className={`${styles.filterItem} ${
-                            selectedFilters.category ===
-                            c._id
-                              ? styles.selected
-                              : ''
-                          }`}
+                          className={`${styles.filterItem} ${selectedFilters.category === c._id ? styles.selected : ''}`}
                           onClick={() =>
                             handleCategoryClick(c._id)
                           }
@@ -305,7 +278,7 @@ export default function GoodsPage() {
                       ))}
                     </div>
                   </div>
-
+                  {/* Розміри */}
                   <div className={styles.filterBlock}>
                     <div className={styles.filterHeader}>
                       <strong>Розмір</strong>
@@ -318,7 +291,6 @@ export default function GoodsPage() {
                         Очистити
                       </button>
                     </div>
-
                     <div className={styles.filterValues}>
                       {filters.sizes.map(size => {
                         const active =
@@ -346,7 +318,7 @@ export default function GoodsPage() {
                       })}
                     </div>
                   </div>
-
+                  {/* Стать */}
                   <div className={styles.filterBlock}>
                     <div className={styles.filterHeader}>
                       <strong>Стать</strong>
@@ -359,7 +331,6 @@ export default function GoodsPage() {
                         Очистити
                       </button>
                     </div>
-
                     <div className={styles.filterValues}>
                       {filters.genders.map(g => {
                         const active =
@@ -393,55 +364,58 @@ export default function GoodsPage() {
         {allGoods.length > 0 ? (
           <>
             <div className={styles.goodsGrid}>
-              {allGoods.map(item => (
-                <div key={item._id}>
-                  <div className={styles.card}>
-                    <div className={styles.imageBox}>
-                      <img
-                        src={item.image}
-                        alt={item.name}
-                      />
-                    </div>
-
-                    <div className={styles.info}>
-                      <h3 className={styles.title}>
-                        {item.name}
-                      </h3>
-
-                      <div className={styles.row}>
-                        <div className={styles.leftMeta}>
-                          <span className={styles.metaItem}>
-                            <svg className={styles.icon}>
-                              <use href="/sprite.svg#icon-icon-star-fill" />
-                            </svg>
-                            {item.avgRating ?? 0}
-                          </span>
-                          <span className={styles.metaItem}>
-                            <svg className={styles.icon}>
-                              <use href="/sprite.svg#icon-comment-section" />
-                            </svg>
-                            {item.feedbackCount ?? 0}
+              {isFetching && page === 1 ? (
+                <GoodsLoader />
+              ) : (
+                allGoods.map(item => (
+                  <div key={item._id}>
+                    <div className={styles.card}>
+                      <div className={styles.imageBox}>
+                        <img
+                          src={item.image}
+                          alt={item.name}
+                        />
+                      </div>
+                      <div className={styles.info}>
+                        <h3 className={styles.title}>
+                          {item.name}
+                        </h3>
+                        <div className={styles.row}>
+                          <div className={styles.leftMeta}>
+                            <span
+                              className={styles.metaItem}
+                            >
+                              <svg className={styles.icon}>
+                                <use href="/sprite.svg#icon-icon-star-fill" />
+                              </svg>
+                              {item.avgRating ?? 0}
+                            </span>
+                            <span
+                              className={styles.metaItem}
+                            >
+                              <svg className={styles.icon}>
+                                <use href="/sprite.svg#icon-comment-section" />
+                              </svg>
+                              {item.feedbackCount ?? 0}
+                            </span>
+                          </div>
+                          <span className={styles.price}>
+                            {item.price.value}{' '}
+                            {item.price.currency || '₴'}
                           </span>
                         </div>
-
-                        <span className={styles.price}>
-                          {item.price.value}{' '}
-                          {item.price.currency || '₴'}
-                        </span>
                       </div>
                     </div>
+                    <Link
+                      href={`/goods/${item._id}`}
+                      className={styles.moreBtn}
+                    >
+                      Детальніше
+                    </Link>
                   </div>
-
-                  <Link
-                    href={`/goods/${item._id}`}
-                    className={styles.moreBtn}
-                  >
-                    Детальніше
-                  </Link>
-                </div>
-              ))}
+                ))
+              )}
             </div>
-
             {allGoods.length < totalGoods && (
               <div className={styles.showMoreWrapper}>
                 <button
@@ -457,6 +431,10 @@ export default function GoodsPage() {
               </div>
             )}
           </>
+        ) : isFetching ? (
+          <div className={styles.loaderText}>
+            Завантаження товарів...
+          </div>
         ) : (
           <MessageNoInfo onClearFilters={handleClearAll} />
         )}

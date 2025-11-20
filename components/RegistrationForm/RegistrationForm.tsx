@@ -141,7 +141,7 @@ export default function RegistrationForm() {
                   id="phone"
                   name="phone"
                   type="tel"
-                  placeholder="380_________"
+                  placeholder="+38 (0__) ___-__-__"
                   className={css.input}
                 />
                 <ErrorMessage
